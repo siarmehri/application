@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import validator from "validator";
 
 type TypeOfPrimitive = "boolean" | "number" | "string";
 type Primitives = boolean | number | string;
@@ -19,14 +20,52 @@ export class Validator {
     next: NextFunction
   ) => {
     try {
-      const { age_of_husband, age_of_wife }: any = req.query;
+      const { age_of_husband, age_of_wife, husband_email }: any = req.query;
       this.IsValidPrimitive(+age_of_husband, 'age_of_husband', "number");
       this.IsValidPrimitive(+age_of_wife, 'age_of_wife', "number");
+      this.IsEmail(husband_email, 'husband_email');
       return next();
     } catch (err) {
       return res.status(400).send({ message: (err as any).message });
     }
   };
+
+  private static GetRequiredApplicationPostRequestFields() {
+    /* const ICampaignPayloadObj: ICampaignPayload = {
+    };
+
+    return Object.keys(ICampaignPayloadObj); */
+  }
+
+
+  IsValidApplicationPostRequestValid = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { age_of_husband, age_of_wife }: any = req.body;
+
+    const errorMap: any = {};
+    if(!this.IsValidPrimitivePost(+age_of_husband, "number")) {
+      errorMap.age_of_husband =`${age_of_husband} is not a valid number`;
+    }
+
+    if(!this.IsValidPrimitivePost(+age_of_wife,  "number")) {
+      errorMap.age_of_wife =  `${age_of_wife} is not a valid number`;
+    }
+    req.body.error_map = errorMap;
+    return next();
+  };
+
+  IsValidPrimitivePost = (
+    param: Primitives,
+    type: TypeOfPrimitive
+  ) => {
+    if (!param || typeof param !== type) {
+      return false;
+    }
+    return true;
+  }
 
   IsValidPrimitive = (
     param: Primitives,
@@ -48,6 +87,24 @@ export class Validator {
     }
   }
 
+  IsEmail = (email: string, name: string) => {
+    try {
+      if(!validator.isEmail(email)) {
+        throw new Error(`Is not a valid email`);
+      }
+    } catch (err) {
+      throw new Error(`${name} has error: ${(err as any).message}`);
+    }
+  }
+  IsEmailPost = (email: string, name: string) => {
+    try {
+      if(!validator.isEmail(email)) {
+        throw new Error(`Is not a valid email`);
+      }
+    } catch (err) {
+      return `${name} has error: ${(err as any).message}`;
+    }
+  }
   ObjectHasKeys = (
     obj: object,
     fields: string[],
@@ -59,24 +116,6 @@ export class Validator {
         throw new Error(`${f} is required field in ${objectName}`);
       }
     });
-  }
-
-  private static GetRequiredStoreCampaignPayloadFields() {
-/*     const ICampaignPayloadObj: ICampaignPayload = {
-      job_id: 1,
-      template_id: 1,
-      file_storage_path: "string",
-      ignore_closed: true,
-      ignore_stopped: true,
-      ignore_paying: true,
-      ignore_arrear: true,
-      is_active: true,
-      added_by: `SM7`,
-      scheduled_date: new Date(),
-      accounts: [{ our_reference: 1, scheduled_date: new Date(), case_type_id: 1 }],
-    };
- */
-//    return Object.keys(ICampaignPayloadObj);
   }
 }
 

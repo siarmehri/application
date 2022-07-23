@@ -9,4 +9,9 @@ router.get('/',
   ApplicationController.GetParamSendMessage
 );
 
+router.post('/valid',
+  CustomValidator.IsValidApplicationPostRequestValid,
+  ApplicationController.GetParamSendMessagePostValid
+);
+
 export const ApplicationRouter: Router = router;
