@@ -2,21 +2,14 @@ import { Request, Response } from 'express';
 
 export class Application {
     GetParamSendMessage = async (req: Request, res: Response) => {
-        const { scope, name }: any = req.query;
+        const { age_of_husband, age_of_wife }: any = req.query;
         return res.send({
-            message: `scope is: ${scope} & name is ${name} & addition is: ${this.AddParam(1, 2)}`
+            total_age_of_husband_and_wife: `${this.AddParam(+age_of_husband, +age_of_wife)}`
         });
     }
 
     AddParam = (a: number, b: number) => {
         return a + b;
-    }
-
-    TestingGetParamSendMessage = async (req: Request, res: Response) => {
-        const { scope }: any = req.query;
-        return res.status(404).send({
-            message: `scope: ${scope} is not available`
-        });
     }
 }
 export const ApplicationController: Application = new Application();
