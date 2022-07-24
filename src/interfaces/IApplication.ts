@@ -2,7 +2,8 @@ export interface IApplication {
   business_type: IBusinessType,
   business_details: IBusinessDetails,
   business_owner_details: [IBusinessOwnerDetails],
-  bank_details: IBankDetails
+  bank_details: IBankDetails,
+  error?: {}
 }
 
 export interface IBankDetails {
@@ -13,6 +14,7 @@ export interface IBankDetails {
   BIC?: string,
   account_number: number,
   business_bank_statement?: File
+  error?: {}
 }
 
 export interface IBusinessOwnerDetails {
@@ -32,6 +34,7 @@ export interface IBusinessOwnerDetails {
   is_inserted?: boolean,
   proof_of_id?: File,
   proof_of_address?: File
+  error?: {}
 }
 
 
@@ -53,7 +56,8 @@ export interface IBusinessType {
   bank_document?: File,
   certificate_of_incorporation?: File,
   processing_history?: File,
-  Business_invoice?: File
+  Business_invoice?: File,
+  error?: {}
 }
 
 export interface IAddress {
@@ -63,6 +67,7 @@ export interface IAddress {
   country: string,
   postcode: string,
   type: AddressType
+  error?: {}
 }
 
 export enum AddressType {
@@ -81,6 +86,7 @@ export interface IBusinessDetails {
   average_transaction_value: number,
   business_email: string,
   phone_number: string
+  error?: {}
 }
 
 export enum BusinessType {

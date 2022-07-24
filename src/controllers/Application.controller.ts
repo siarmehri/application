@@ -4,7 +4,7 @@ import { IApplication } from '../interfaces/IApplication';
 export class Application {
     PostApplication = async (req: Request, res: Response) => {
         const application: IApplication = req.body;
-        return res.send({message: 'validated'});
+        return res.send(application);
     }
 }
 export const ApplicationController: Application = new Application();

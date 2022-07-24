@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 import validator from "validator";
-import { AddressType, BusinessType, IApplication, JobTitle } from "../interfaces/IApplication";
+import { AddressType, BusinessType, IApplication, IBusinessType, JobTitle } from "../interfaces/IApplication";
 
 type TypeOfPrimitive = "boolean" | "number" | "string";
 type Primitives = boolean | number | string;
 
 export class Validator {
-  IsValidDate = (param: string | Date, name: string) => {
+  IsValidDate = (param: string | Date) => {
     if (
       (typeof param === "string" && isNaN(Date.parse(param))) ||
       !(new Date(param) instanceof Date)
     ) {
-      throw new Error(`${name} is not a valid date`);
+      return false;
     }
+    return true;
   }
 
   private static GetRequiredApplicationPostRequestFields() {
@@ -23,7 +24,7 @@ export class Validator {
   }
 
 
-  GetApplicationObject = (): IApplication => {
+  GetMockApplication = (): IApplication => {
     return {
       business_type: {
         company_name: 'Devondemand UK Ltd.',
@@ -81,8 +82,7 @@ export class Validator {
     }
   }
 
-  IsValidStructure = (application: IApplication) => {
-    const mockApplication = this.GetApplicationObject();
+  IsValidStructure = (application: IApplication, mockApplication: IApplication) => {
     this.ObjectHasKeys(application, Object.keys(mockApplication), 'application_object');
     this.ObjectHasKeys(application.business_type, Object.keys(mockApplication.business_type));
     this.ObjectHasKeys(application.business_details, Object.keys(mockApplication.business_details));
@@ -106,6 +106,44 @@ export class Validator {
     this.ObjectHasKeys(application.bank_details, Object.keys(mockApplication.bank_details), 'bank_details');
   }
 
+  IsValidBusinessType = (businessType: IBusinessType, mockBusinessType: any) => {
+    const error: any = {};
+    Object.entries(businessType).forEach((element) => {
+      const typeOfField = typeof mockBusinessType[element[0]];
+      const businessTypeValues = Object.values(BusinessType);
+      if (element[0] === 'business_type' && !businessTypeValues.includes(element[1])) {
+        error[element[0]] = `${element[0]} needs to be one of ${businessTypeValues.join(', ')} values`;
+      } else if(typeOfField === 'number' && !this.IsValidPrimitivePost(+element[1], typeOfField as TypeOfPrimitive)) {
+        error[element[0]] = `${element[0]} is not a valid ${typeOfField}`
+      } else if((typeOfField === 'string' || typeOfField === 'boolean') && !this.IsValidPrimitivePost(element[1], typeOfField as TypeOfPrimitive)) {
+        error[element[0]] = `${element[0]} is not a valid ${typeOfField}`
+      } else if (mockBusinessType[element[0]] instanceof Date && !this.IsValidDate(element[1])) {
+        error[element[0]] = `${element[0]} is not a valid Date`
+      }
+    });
+    return error;
+  }
+
+  IsValidFields = (application: IApplication, mockApplication: IApplication) => {
+    const businessTypeErrors = this.IsValidBusinessType(application.business_type, mockApplication.business_type);
+    if (JSON.stringify(businessTypeErrors) !== JSON.stringify({})) {
+      application.business_type.error = businessTypeErrors;
+    }
+
+
+    /* const businessDetailsErrors = this.IsValidBusinessType(application.business_type, mockApplication.business_type);
+    if (JSON.stringify(businessTypeErrors) !== JSON.stringify({})) {
+      application.business_type.error = businessTypeErrors;
+    } */
+
+
+    let applicationLevelError = {...businessTypeErrors/* , ...businessDetailsErrors */};
+    if (JSON.stringify(applicationLevelError) !== JSON.stringify({})) {
+      application.error = applicationLevelError;
+    }
+    return application;
+  }
+
   IsValidApplicationRequest = async (
     req: Request,
     res: Response,
@@ -113,11 +151,13 @@ export class Validator {
   ) => {
     const application: IApplication = req.body;
     try {
-      this.IsValidStructure(application);
+      const mockApplication = this.GetMockApplication();
+      this.IsValidStructure(application, mockApplication);
+      req.body = this.IsValidFields(application, mockApplication);
+      return next();
     } catch (err) {
       return res.status(400).send({ message: (err as any).message });
     }
-    return next();
   };
 
   IsValidPrimitivePost = (
