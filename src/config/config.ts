@@ -5,6 +5,7 @@ export const IsTest = () =>{
   return process.env.MODE && process.env.MODE.trim().toLowerCase() === 'test';
 }
 
+
 export const config = {
   db: {
     username: process.env.MYSQL_USERNAME,
@@ -12,5 +13,5 @@ export const config = {
     database: process.env.MYSQL_DATABASE,
     host: process.env.MYSQL_HOST,
     logging: (IsProduction()) ? false : true
-  },
+  }
 }

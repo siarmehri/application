@@ -7,7 +7,7 @@ export interface IApplication {
 }
 
 export interface IExtraApplicationData {
-  
+
 }
 
 export interface IBankDetails {
