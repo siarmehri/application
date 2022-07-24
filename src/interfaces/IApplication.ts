@@ -6,6 +6,10 @@ export interface IApplication {
   error?: {}
 }
 
+export interface IExtraApplicationData {
+  
+}
+
 export interface IBankDetails {
   account_holder_name: string,
   bank_name: string,
