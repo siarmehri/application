@@ -4,14 +4,9 @@ import { ApplicationController } from '../controllers/Application.controller';
 
 const router: Router = Router();
 
-router.get('/',
-  CustomValidator.IsValidApplicationRequest,
-  ApplicationController.GetParamSendMessage
-);
-
-router.post('/valid',
-  CustomValidator.IsValidApplicationPostRequestValid,
-  ApplicationController.GetParamSendMessagePostValid
+router.post('/',
+  CustomValidator.IsValidApplicationPostRequest,
+  ApplicationController.PostApplication
 );
 
 export const ApplicationRouter: Router = router;
