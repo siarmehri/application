@@ -5,7 +5,7 @@ import { ApplicationController } from '../controllers/Application.controller';
 const router: Router = Router();
 
 router.post('/',
-  CustomValidator.IsValidApplicationPostRequest,
+  CustomValidator.IsValidApplicationRequest,
   ApplicationController.PostApplication
 );
 
