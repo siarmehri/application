@@ -14,22 +14,6 @@ export class Validator {
     }
   }
 
-  IsValidApplicationRequest = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const { age_of_husband, age_of_wife, husband_email }: any = req.query;
-      this.IsValidPrimitive(+age_of_husband, 'age_of_husband', "number");
-      this.IsValidPrimitive(+age_of_wife, 'age_of_wife', "number");
-      this.IsEmail(husband_email, 'husband_email');
-      return next();
-    } catch (err) {
-      return res.status(400).send({ message: (err as any).message });
-    }
-  };
-
   private static GetRequiredApplicationPostRequestFields() {
     /* const ICampaignPayloadObj: ICampaignPayload = {
     };
@@ -38,7 +22,7 @@ export class Validator {
   }
 
 
-  IsValidApplicationPostRequestValid = async (
+  IsValidApplicationPostRequest = async (
     req: Request,
     res: Response,
     next: NextFunction

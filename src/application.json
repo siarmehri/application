@@ -1,0 +1,91 @@
+{
+  "business_type": {
+    "company_name": "",
+    "registered_business_country": "",
+    "company_number": "",
+    "business_type": "",
+    "date_of_incorporation_or_formation": "",
+    "trading_name":"",
+    "vat_number": 0,
+    "company_document":"file",
+    "bank_document":"file",
+    "certificate_of_incorporation":"file",
+    "processing_history":"file",
+    "Business_invoice":"file"
+  },
+  "business_details": {
+    "business_street_address": "",
+    "business_town_city": "",
+    "business_postcode": "",
+    "website": "",
+    "merchant_fulfillment": 0,
+    "business_transactions_ecom": 0,
+    "business_transactions_moto": 0,
+    "business_transactions_pos": 0,
+    "month_expected_card_volume": 0,
+    "average_transaction_value": 0,
+    "business_email": "",
+    "phone_number": ""
+  },
+  "business_owners_details": [
+  [{
+      "first_name": "",
+      "date_of_birth": "",
+      "last_name": "",
+      "country_of_registration":"",
+      "nationality":"",
+      "building_house_number":0,
+      "owner_street":"",
+      "owner_city":"",
+      "owner_region":"",
+      "owner_postcode":"",
+      "ownership_percentage": "%",
+      "email_address": "",
+      "job_title":"Director , Shareholder, Ultimate Beneficial Owner",
+      "place_of_birth":"",
+      "proof_of_id":"file",
+      "proof_of_address":"file"
+    }]
+  ],
+
+  "bank_details": {
+    "account_holder_name": "",
+    "bank_name": "",
+    "IBAN":"",
+    "sort_code": "",
+    "BIC":"",
+    "account_number": "",
+    "business_bank_statement": "file"
+  },
+
+  "terminals":{
+    "terminal_location_name":"",
+    "terminal_location_street":"",
+    "terminal_location_city":"",
+    "terminal_location_postcode":"",
+    "terminal_location_countrycode":"",
+    "terminal_location_contact_phone":"",
+    "terminal_location_contact_name":"",
+    "terminal_location_email":"",
+    "delivery_location_street":"",
+    "delivery_location_city":"",
+    "delivery_location_postcode":"",
+    "delivery_location_countrycode":"",
+    "delivery_location_contact_phone":"",
+    "delivery_location_contact_name":"",
+    "delivery_location_email":"",
+    "CardStatementDescriptor" : "Castle Park Hotel",
+    "POSAMEXMid":"",
+    "RecurringTransactions":"",
+    "NoOfCountertopPinpadunits":1,
+    "NoOfCountertopUnits":1,
+    "NoOfPinpadOnlyUnits":1,
+    "NoOfMobileUnits":1,
+    "NoOfSIMCards":1,
+    "MOTOforPOS":"",
+    "RentalOrPurchase":"",
+    "ContractTerm":0,
+    "Gratuity":"",
+    "HospitalityTxns":""
+  }
+}
