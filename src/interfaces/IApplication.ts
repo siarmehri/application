@@ -69,7 +69,7 @@ export interface IBusinessType {
   processing_history?: File,
   Business_invoice?: File,
   get_link?: {
-    for_field: string, //company_document, bank_document, 
+    for_field: string, //company_document, bank_document,
     file_format: string //pdf, jpeg, jpg, png
   }
   put_link?: {
