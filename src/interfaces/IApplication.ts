@@ -17,7 +17,14 @@ export interface IBankDetails {
   sort_code: string,
   BIC?: string,
   account_number: number,
-  business_bank_statement?: File
+  business_bank_statement?: File, //Mandatory
+  get_link?: {
+    for_field: string, //business_bank_statement
+    file_format: string //pdf, jpeg, jpg, png
+  }
+  put_link?: {
+    path: string
+  }
   error?: {}
 }
 
@@ -31,13 +38,13 @@ export interface IBusinessOwnerDetails {
   address: IAddress,
   ownership_percentage: number,
   email_address: string,
-  job_title: JobTitle,
+  job_title: JobTitle, // Defaulted Director
   place_of_birth: string,
   is_updated?: boolean,
   is_deleted?: boolean,
   is_inserted?: boolean,
   proof_of_id?: File,
-  proof_of_address?: File
+  proof_of_address?: File,
   get_link?: {
     for_field: string, //proof_of_id, proof_of_address
     file_format: string //pdf, jpeg, jpg, png
@@ -61,8 +68,8 @@ export interface IBusinessType {
   company_number: string,
   business_type: BusinessType,
   date_of_incorporation_or_formation: Date,
-  trading_name: string, // What is the difference between trading name and company name.
-  vat_number: number,
+  trading_name: string,
+  vat_number: string,
   company_document?: File,
   bank_document?: File,
   certificate_of_incorporation?: File,
@@ -97,20 +104,20 @@ export interface IBusinessDetails {
   address: IAddress,
   website: string,
   merchant_fulfillment: number,
-  business_transactions_ecom: number,
-  business_transactions_moto: number,
-  business_transactions_pos: number,
-  month_expected_card_volume: number,
-  average_transaction_value: number,
+  business_transactions_ecom: number, // Defaulted
+  business_transactions_moto: number, // Defaulted
+  business_transactions_pos: number, // Defaulted
+  month_expected_card_volume: number, // Defaulted
+  average_transaction_value: number, // Defaulted
   business_email: string,
   phone_number: string
   error?: {}
 }
 
 export enum BusinessType {
-  LIMITED = "Limited",
-  SOLE_TRADER = "Sole Trader",
-  PARTNERSHIP_LIMITED = "Partnership Limited",
-  CLUB = "Club",
-  CHARITY = "Charity"
+  LIMITED = "Limited", // At least one owner
+  SOLE_TRADER = "Sole Trader", // Only one owner
+  PARTNERSHIP_LIMITED = "Partnership Limited", // At least two owners
+  CLUB = "Club", // At least 3 members of committee -> Once club selected it is not business owner anymore committee members
+  CHARITY = "Charity" // At least one owner -> removed percentages
 }
