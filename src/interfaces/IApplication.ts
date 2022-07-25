@@ -38,6 +38,13 @@ export interface IBusinessOwnerDetails {
   is_inserted?: boolean,
   proof_of_id?: File,
   proof_of_address?: File
+  get_link?: {
+    for_field: string, //proof_of_id, proof_of_address
+    file_format: string //pdf, jpeg, jpg, png
+  }
+  put_link?: {
+    path: string
+  }
   error?: {}
 }
 
@@ -61,6 +68,13 @@ export interface IBusinessType {
   certificate_of_incorporation?: File,
   processing_history?: File,
   Business_invoice?: File,
+  get_link?: {
+    for_field: string, //company_document, bank_document, 
+    file_format: string //pdf, jpeg, jpg, png
+  }
+  put_link?: {
+    path: string
+  }
   error?: {}
 }
 
