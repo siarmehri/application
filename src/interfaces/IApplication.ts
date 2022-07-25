@@ -18,13 +18,8 @@ export interface IBankDetails {
   BIC?: string,
   account_number: number,
   business_bank_statement?: File, //Mandatory
-  get_link?: {
-    for_field: string, //business_bank_statement
-    file_format: string //pdf, jpeg, jpg, png
-  }
-  put_link?: {
-    path: string
-  }
+  get_link?: IGetLink
+  put_link?: IPutLink
   error?: {}
 }
 
@@ -45,13 +40,8 @@ export interface IBusinessOwnerDetails {
   is_inserted?: boolean,
   proof_of_id?: File,
   proof_of_address?: File,
-  get_link?: {
-    for_field: string, //proof_of_id, proof_of_address
-    file_format: string //pdf, jpeg, jpg, png
-  }
-  put_link?: {
-    path: string
-  }
+  get_link?: IGetLink
+  put_link?: IPutLink
   error?: {}
 }
 
@@ -70,19 +60,23 @@ export interface IBusinessType {
   date_of_incorporation_or_formation: Date,
   trading_name: string,
   vat_number: string,
-  company_document?: File,
+  company_document?: File, // Mandatory
+  certificate_of_incorporation?: File, //Mandatory
   bank_document?: File,
-  certificate_of_incorporation?: File,
   processing_history?: File,
   Business_invoice?: File,
-  get_link?: {
-    for_field: string, //company_document, bank_document,
-    file_format: string //pdf, jpeg, jpg, png
-  }
-  put_link?: {
-    path: string
-  }
+  get_link?: IGetLink
+  put_link?: IPutLink
   error?: {}
+}
+
+export interface IPutLink {
+  for_field: string, //company_document, bank_document,
+  file_format: string //pdf, jpeg, jpg, png
+}
+
+export interface IGetLink {
+  url: string
 }
 
 export interface IAddress {
