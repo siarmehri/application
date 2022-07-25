@@ -14,12 +14,12 @@ export enum BusinessType {
   CHARITY = "Charity" // At least one owner -> removed percentages
 }
 
-export interface IPutLink {
+export interface IGetLink {
   for_field: string, //company_document, bank_document,
   file_format: string //pdf, jpeg, jpg, png
 }
 
-export interface IGetLink {
+export interface IPutLink {
   url: string
 }
 
@@ -36,8 +36,8 @@ export interface IBusinessType {
   bank_document?: File,
   processing_history?: File,
   Business_invoice?: File,
-  get_link?: IGetLink
-  put_link?: IPutLink
+  get_link?: IGetLink,
+  put_link?: IPutLink,
   error?: {}
 }
 

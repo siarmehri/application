@@ -8,11 +8,13 @@ export class Application {
         if(JSON.stringify(application.error) !== JSON.stringify({})) {
             await MongoosClass.StoreDraftApplication(application);
             // not completed
+            // Shakir
         } else {
             // Relational DB logic ()
             // Draft application should be deleted from MongoDB
             // Store Extra Data in Mongo
             // completed
+            // Ashraf
         }
 
         return res.send(application);
