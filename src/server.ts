@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import { Models } from "./model/model.index";
 import { ApplicationRouter } from "./route/application.router";
+import {  ClienRouter} from "./route/client.router";
 import { sequelize } from "./util/sequelize";
 const app = express();
 const port = 8080; // default port to listen
@@ -12,10 +13,11 @@ const port = 8080; // default port to listen
   });
 
   await sequelize.addModels(Models);
-  await sequelize.sync({force: true});
+  await sequelize.sync();
 
   app.use(bodyParser.json({ limit: "20mb" })); /* {limit: "20mb"} */
   app.use("/application", ApplicationRouter)
+    app.use("/client", ClienRouter)
   app.get("/healthz", async (req, res) => {
     res.send('I am happy and healthy!\n');
   });
