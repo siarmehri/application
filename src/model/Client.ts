@@ -1,8 +1,42 @@
-import { 
+import {
   Table, Column, Model, Default,
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
-  Sequelize, DataType, AllowNull
+  Sequelize, DataType, AllowNull, Scopes, HasMany
 } from 'sequelize-typescript';
+import { Address } from './Address';
+import { ClientContact } from './ClientContact';
+
+
+@Scopes(() => ({
+  full: {
+    attributes: {
+      exclude: ['updated_at', 'created_at']
+    },
+    include: [{
+      attributes: {
+        exclude: ['updated_at', 'created_at']
+      },
+      model: ClientContact,
+      include: [{
+        model: Address
+      }]
+    }, {
+      model: Address
+    }]
+    /* include: [{
+      attributes: ['min_email_contacts', 'min_sms_contacts', 'min_letter_contacts', 'action_delay'],
+      model: CaseTypeSla
+    },
+    {
+      model: Mode,
+      through: { attributes: [] }
+    },
+    {
+      model: Strategy,
+      through: { attributes: [] }
+    }] */
+  }
+}))
 
 
 @Table({ tableName: 'client' })
@@ -47,7 +81,7 @@ export class Client extends Model<Client> {
   date_of_incorporation: Date;
 
   @Column
-  finance_status: string;
+  finance_status: string; // What is this
 
   @Column
   status: string;
@@ -70,5 +104,10 @@ export class Client extends Model<Client> {
   @Column
   @UpdatedAt
   updated_at: Date = new Date();
+
+  @HasMany(() => ClientContact)
+  clientContacts: [ClientContact];
+  @HasMany(() => Address)
+  addresses: [Address];
 }
 

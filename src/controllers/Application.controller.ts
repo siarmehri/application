@@ -21,7 +21,10 @@ export class Application {
     }
 
     GetApplication = async (req: Request, res: Response) => {
-        // take client_id from jwt
+        // take client_id from jwt Ashraf -> 
+        // 1. Mongo DB Draft Application (In this scenario no need to take it from relational db)
+        // 2 if nothing in mongo db take full scope of client and rebuild the IApplication Object return that object to FE
+
         return res.send();
     }
 }

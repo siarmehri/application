@@ -1,7 +1,7 @@
-import { 
+import {
   Table, Column, Model, Default,
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
-  Sequelize, DataType, AllowNull,ForeignKey,BelongsTo
+  Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
 } from 'sequelize-typescript';
 import { Client } from './Client';
 
@@ -14,7 +14,7 @@ export class Website extends Model<Website> {
   public id: number;
 
   @Column
-  urls: string;
+  url: string;
 
   @ForeignKey(() => Client)
   @Column
@@ -30,7 +30,7 @@ export class Website extends Model<Website> {
   @UpdatedAt
   updated_at: Date = new Date();
 
-   @BelongsTo(() => Client)
+  @BelongsTo(() => Client)
   client: Client;
 }
 

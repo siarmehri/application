@@ -1,7 +1,7 @@
-import { 
+import {
   Table, Column, Model, Default,
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
-  Sequelize, DataType, AllowNull,ForeignKey,BelongsTo
+  Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
 } from 'sequelize-typescript';
 import { Client } from './Client';
 import { ClientContact } from './ClientContact';
@@ -13,9 +13,9 @@ export class PhoneNumber extends Model<PhoneNumber> {
   @Column
   public id: number;
 
- 
-  @Column(DataType.ENUM('private', 'localnumber', 'bussinesnumber'))
- type: string;
+
+  @Column(DataType.ENUM('private', 'local_number', 'business_number'))
+  type: string;
 
   @Column
   phone_number: string;
@@ -24,7 +24,7 @@ export class PhoneNumber extends Model<PhoneNumber> {
   @Column
   client_id: number;
 
-  @ForeignKey(() => ClientContact )
+  @ForeignKey(() => ClientContact)
   @Column
   client_contact_id: number;
 
@@ -39,10 +39,10 @@ export class PhoneNumber extends Model<PhoneNumber> {
   @UpdatedAt
   updated_at: Date = new Date();
 
-   @BelongsTo(() => Client)
+  @BelongsTo(() => Client)
   client: Client;
-     @BelongsTo(() => ClientContact)
- client_contact: ClientContact;
+  @BelongsTo(() => ClientContact)
+  client_contact: ClientContact;
 }
 
 

@@ -1,4 +1,5 @@
-import { Table, Column, Model, Default, UpdatedAt, CreatedAt, ForeignKey, AutoIncrement, PrimaryKey, BelongsTo  } from 'sequelize-typescript';
+import { Table, Column, Model, Default, UpdatedAt, CreatedAt, ForeignKey, AutoIncrement, PrimaryKey, BelongsTo, HasMany  } from 'sequelize-typescript';
+import { Address } from './Address';
 import { Client } from './Client';
 
 
@@ -53,5 +54,8 @@ export class ClientContact extends Model<ClientContact> {
 
   @BelongsTo(() => Client)
   client: Client;
+
+  @HasMany(() => Address)
+  addresses: [Address];
 }
 

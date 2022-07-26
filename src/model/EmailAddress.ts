@@ -1,7 +1,7 @@
-import { 
+import {
   Table, Column, Model, Default,
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
-  Sequelize, DataType, AllowNull,ForeignKey,BelongsTo
+  Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
 } from 'sequelize-typescript';
 import { Client } from './Client';
 import { ClientContact } from './ClientContact';
@@ -13,9 +13,8 @@ export class EmailAddress extends Model<EmailAddress> {
   @Column
   public id: number;
 
- 
-  @Column(DataType.ENUM('privateemail', 'localemail', 'bussinesemail'))
- type: string;
+  @Column(DataType.ENUM('private_email', 'local_email', 'business_email'))
+  type: string;
 
   @Column
   emails: string;
@@ -24,10 +23,9 @@ export class EmailAddress extends Model<EmailAddress> {
   @Column
   client_id: number;
 
-  @ForeignKey(() => ClientContact )
+  @ForeignKey(() => ClientContact)
   @Column
   client_contact_id: number;
-
 
   @Default(Sequelize.fn('now'))
   @Column
@@ -39,10 +37,11 @@ export class EmailAddress extends Model<EmailAddress> {
   @UpdatedAt
   updated_at: Date = new Date();
 
-   @BelongsTo(() => Client)
+  @BelongsTo(() => Client)
   client: Client;
-       @BelongsTo(() => ClientContact)
- client_contact: ClientContact;
+
+  @BelongsTo(() => ClientContact)
+  client_contact: ClientContact;
 }
 
 
