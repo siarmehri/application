@@ -41,7 +41,7 @@ export class Application {
             // Relational DB logic ()
             this.StoreApplicationInDB(application);
             // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
-            appExtraData.storeApplicationExtraData(application.business_details, application);
+            await appExtraData.storeApplicationExtraData(application.business_details, application);
             // completed
             // Ashraf
         }
@@ -52,10 +52,16 @@ export class Application {
     GetApplication = async (req: Request, res: Response) => {
       // take client_id from jwt Ashraf ->
       // 1. Mongo DB Draft Application (In this scenario no need to take it from relational db)
-      // 2 if nothing in mongo db take full scope of client and rebuild the IApplication Object return that object to FE
       const { id } = req.params;
-      const client = await Client.scope('full').findByPk(id);
-      return res.send(client);
+      const draftApp = await DraftApplication.GetDraftApplication({client_id: parseInt(id)});
+      if(draftApp){
+        res.send(draftApp)
+      }
+      else{
+        // 2 if nothing in mongo db take full scope of client and rebuild the IApplication Object return that object to FE
+        const client = await Client.scope('full').findByPk(id);
+        return res.send(client);  
+      }
     }
 }
 
