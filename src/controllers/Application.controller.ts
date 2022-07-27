@@ -6,7 +6,7 @@ export class Application {
     PostApplication = async (req: Request, res: Response) => {
         const application: IApplication = req.body;
         if(JSON.stringify(application.error) !== JSON.stringify({})) {
-            await MongoosClass.StoreDraftApplication(application);
+            await MongoosClass.StoreDraftApplication();
             // not completed
             // Shakir
         } else {

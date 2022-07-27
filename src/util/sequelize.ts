@@ -10,7 +10,7 @@ export const sequelize = new Sequelize({
     host: c.host,
     dialect: 'mysql',
     storage: ':memory:',
-    logging: c.logging,
+    //logging: c.logging,
     pool: {
       max: 10,
       min: 0,
