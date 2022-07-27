@@ -7,7 +7,7 @@ import { Website } from '../model/website';
 import { ClientContact } from '../model/ClientContact';
 import { Address } from '../model/Address';
 import { Transaction } from 'sequelize';
-
+import {appExtraData} from '../util/ApplicationExtraData'
 export interface IClient {
   company_name: string,
   trading_name: string
@@ -41,6 +41,7 @@ export class Application {
             // Relational DB logic ()
             this.StoreApplicationInDB(application);
             // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
+            appExtraData.storeApplicationExtraData(application.business_details, application);
             // completed
             // Ashraf
         }
