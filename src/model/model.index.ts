@@ -1,4 +1,5 @@
 import { Address } from "./Address";
+import { BankDetail } from "./BankDetail";
 import { Client } from "./Client";
 import { ClientContact } from "./ClientContact";
 import { EmailAddress } from "./EmailAddress";
@@ -11,5 +12,6 @@ export const Models = [
     Address,
     EmailAddress,
     PhoneNumber,
-    Website
+    Website,
+    BankDetail
 ];

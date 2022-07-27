@@ -4,17 +4,30 @@ import {
   Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
 } from 'sequelize-typescript';
 import { Client } from './Client';
+import { ClientContact } from './ClientContact';
 
-
-@Table({ tableName: 'website' })
-export class Website extends Model<Website> {
+@Table({ tableName: 'bank_detail' })
+export class BankDetail extends Model<BankDetail> {
   @AutoIncrement
   @PrimaryKey
   @Column
   public id: number;
 
+
   @Column
-  urls: string;
+  full_name: string;
+
+  @Column
+   bank_account_number: string;
+
+  @Column
+   sort_code: string;
+   
+  @Column
+   bank_name: string;
+   
+  @Column
+    iban: string;
 
   @ForeignKey(() => Client)
   @Column
@@ -32,6 +45,7 @@ export class Website extends Model<Website> {
 
   @BelongsTo(() => Client)
   client: Client;
+
 }
 
 

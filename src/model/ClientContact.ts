@@ -1,7 +1,20 @@
-import { Table, Column, Model, Default, UpdatedAt, CreatedAt, ForeignKey, AutoIncrement, PrimaryKey, BelongsTo, HasMany  } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  Default,
+  UpdatedAt,
+  CreatedAt,
+  ForeignKey,
+  AutoIncrement,
+  PrimaryKey,
+  BelongsTo,
+  HasMany,
+} from 'sequelize-typescript';
 import { Address } from './Address';
 import { Client } from './Client';
-
+import { EmailAddress } from './EmailAddress';
+import { PhoneNumber } from './PhoneNumber';
 
 @Table({ tableName: 'client_contact' })
 export class ClientContact extends Model<ClientContact> {
@@ -57,5 +70,8 @@ export class ClientContact extends Model<ClientContact> {
 
   @HasMany(() => Address)
   addresses: [Address];
+  @HasMany(() => PhoneNumber)
+  phonenumbers: [PhoneNumber];
+  @HasMany(() => EmailAddress)
+  emails: [EmailAddress];
 }
-

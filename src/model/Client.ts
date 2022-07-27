@@ -1,28 +1,82 @@
 import {
-  Table, Column, Model, Default,
-  UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
-  Sequelize, DataType, AllowNull, Scopes, HasMany
+  Table,
+  Column,
+  Model,
+  Default,
+  UpdatedAt,
+  CreatedAt,
+  AutoIncrement,
+  PrimaryKey,
+  Sequelize,
+  DataType,
+  AllowNull,
+  Scopes,
+  HasMany,
 } from 'sequelize-typescript';
 import { Address } from './Address';
 import { ClientContact } from './ClientContact';
-
+import { EmailAddress } from './EmailAddress';
+import { PhoneNumber } from './PhoneNumber';
+import { Website } from './website';
 
 @Scopes(() => ({
   full: {
     attributes: {
-      exclude: ['updated_at', 'created_at']
+      exclude: ['updated_at', 'created_at'],
     },
-    include: [{
-      attributes: {
-        exclude: ['updated_at', 'created_at']
+    include: [
+      {
+        attributes: {
+          exclude: ['updated_at', 'created_at'],
+        },
+        model: ClientContact,
+        include: [
+          {
+            attributes: {
+              exclude: ['updated_at', 'created_at'],
+            },
+            model: Address,
+          },
+          {
+            attributes: {
+              exclude: ['updated_at', 'created_at'],
+            },
+            model: PhoneNumber,
+          },
+          {
+            attributes: {
+              exclude: ['updated_at', 'created_at'],
+            },
+            model: EmailAddress,
+          },
+        ],
       },
-      model: ClientContact,
-      include: [{
-        model: Address
-      }]
-    }, {
-      model: Address
-    }]
+      {
+        attributes: {
+          exclude: ['updated_at', 'created_at'],
+        },
+
+        model: Address,
+      },
+      {
+        attributes: {
+          exclude: ['updated_at', 'created_at', 'client_contact_id'],
+        },
+        model: PhoneNumber,
+      },
+      {
+        attributes: {
+          exclude: ['updated_at', 'created_at', 'client_contact_id'],
+        },
+        model: EmailAddress,
+      },
+      {
+        attributes: {
+          exclude: ['updated_at', 'created_at'],
+        },
+        model: Website,
+      },
+    ],
     /* include: [{
       attributes: ['min_email_contacts', 'min_sms_contacts', 'min_letter_contacts', 'action_delay'],
       model: CaseTypeSla
@@ -35,10 +89,8 @@ import { ClientContact } from './ClientContact';
       model: Strategy,
       through: { attributes: [] }
     }] */
-  }
+  },
 }))
-
-
 @Table({ tableName: 'client' })
 export class Client extends Model<Client> {
   @AutoIncrement
@@ -55,7 +107,15 @@ export class Client extends Model<Client> {
   trading_name: string;
 
   @AllowNull(false)
-  @Column(DataType.ENUM("Limited", "Sole Trader", "Partnership Limited", "Club", "Charity"))
+  @Column(
+    DataType.ENUM(
+      'Limited',
+      'Sole Trader',
+      'Partnership Limited',
+      'Club',
+      'Charity'
+    )
+  )
   business_type: string;
 
   @AllowNull(false)
@@ -107,7 +167,14 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientContact)
   clientContacts: [ClientContact];
+
   @HasMany(() => Address)
   addresses: [Address];
-}
 
+  @HasMany(() => PhoneNumber)
+  phonenumbers: [PhoneNumber];
+  @HasMany(() => EmailAddress)
+  emails: [EmailAddress];
+  @HasMany(() => Website)
+  websites: [Website];
+}
