@@ -6,6 +6,7 @@ import { sequelize } from '../util/sequelize';
 import { Website } from '../model/website';
 
 export class Application {
+<<<<<<< HEAD
   PostApplication = async (req: Request, res: Response) => {
     const application: IApplication = req.body;
     console.log("good job",application);
@@ -26,6 +27,23 @@ export class Application {
       // Store Extra Data in Mongo
       // completed
       // Ashraf
+=======
+    PostApplication = async (req: Request, res: Response) => {
+        const application: IApplication = req.body;
+        if(JSON.stringify(application.error) !== JSON.stringify({})) {
+            await MongoosClass.StoreDraftApplication();
+            // not completed
+            // Shakir
+        } else {
+            // Relational DB logic ()
+            // Draft application should be deleted from MongoDB
+            // Store Extra Data in Mongo
+            // completed
+            // Ashraf
+        }
+
+        return res.send(application);
+>>>>>>> 81f26bd7be3a6eac5e4e8821e16c637fa337a0f1
     }
 
     return res.send(application);

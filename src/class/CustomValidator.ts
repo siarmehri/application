@@ -41,6 +41,7 @@ export class Validator {
           locality: 'Bradford',
           country: 'UK',
           postcode: 'BD5 9EZ',
+          isPrimary: true,
           type: AddressType.CLIENT_ADDRESS
         },
         website: 'https://devondemand.co.uk',
@@ -65,6 +66,7 @@ export class Validator {
             locality: 'Bradford',
             country: 'UK',
             postcode: 'BD5 9EZ',
+            isPrimary: false,
             type: AddressType.CLIENT_CONTACT_ADDRESS,
           },
           ownership_percentage: 100,

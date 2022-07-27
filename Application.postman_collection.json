@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "673343d1-3c02-4c80-8dbe-fbd1c17e71f2",
+		"name": "Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/application/",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "/application/valid",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"business_type\": {\n        \"company_name\": \"Devondemand UK Ltd.\",\n        \"registered_business_country\": \"UK\",\n        \"company_number\": \"1232abc\",\n        \"business_type\": \"Limited\",\n        \"date_of_incorporation_or_formation\": \"2022-03-14\",\n        \"trading_name\": \"Devondemand UK Ltd.\",\n        \"vat_number\": 9898989\n    },\n    \"business_details\": {\n        \"address\": {\n            \"address_line_1\": \"2 Grain Street\",\n            \"locality\": \"Bradford\",\n            \"country\": \"UK\",\n            \"postcode\": \"BD5 9EZ\",\n            \"type\": \"Client address\"\n        },\n        \"website\": \"https://devondemand.co.uk\",\n        \"merchant_fulfillment\": 10,\n        \"business_transactions_ecom\": 10,\n        \"business_transactions_moto\": 10,\n        \"business_transactions_pos\": 0,\n        \"month_expected_card_volume\": 10,\n        \"average_transaction_value\": 1000,\n        \"business_email\": \"siarmehri@devondemand.co.uk\",\n        \"phone_number\": \"07492051788\"\n    },\n    \"business_owner_details\": [\n        {\n            \"first_name\": \"Ahmad Siar\",\n            \"last_name\": \"Mehri\",\n            \"date_of_birth\": \"1999-05-20\",\n            \"country_of_residence\": \"UK\",\n            \"nationality\": \"Afghan\",\n            \"address\": {\n                \"address_line_1\": \"2 Grain Street\",\n                \"locality\": \"Bradford\",\n                \"country\": \"UK\",\n                \"postcode\": \"BD5 9EZ\",\n                \"type\": \"CLIENT CONTACT ADDRESS\"\n            },\n            \"ownership_percentage\": 100,\n            \"email_address\": \"siarmehri@devondemand.co.uk\",\n            \"job_title\": \"DIRECTOR\",\n            \"place_of_birth\": \"Afghanistan\"\n        }\n    ],\n    \"bank_details\": {\n        \"account_holder_name\": \"Ahmad Siar Mehri\",\n        \"bank_name\": \"Lloyds Bank\",\n        \"account_number\": 87654321,\n        \"sort_code\": \"89-90-98\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/client",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
