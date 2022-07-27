@@ -40,9 +40,7 @@ export class Validator {
           address_line_1: "2 Grain Street",
           locality: 'Bradford',
           country: 'UK',
-          postcode: 'BD5 9EZ',
-          isPrimary: true,
-          type: AddressType.CLIENT_ADDRESS
+          postcode: 'BD5 9EZ'
         },
         website: 'https://devondemand.co.uk',
         merchant_fulfillment: 10,
@@ -65,9 +63,7 @@ export class Validator {
             address_line_1: "2 Grain Street",
             locality: 'Bradford',
             country: 'UK',
-            postcode: 'BD5 9EZ',
-            isPrimary: false,
-            type: AddressType.CLIENT_CONTACT_ADDRESS,
+            postcode: 'BD5 9EZ'
           },
           ownership_percentage: 100,
           email_address: 'siarmehri@devondemand.co.uk',

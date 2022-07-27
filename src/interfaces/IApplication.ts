@@ -1,6 +1,7 @@
 import internal from "stream"
 
 export interface IApplication {
+  client_id?: number,
   business_type: IBusinessType, // half an hour -> an hour
   business_details: IBusinessDetails,
   business_owner_details: [IBusinessOwnerDetails],
@@ -110,8 +111,7 @@ export interface IAddress {
   locality?: string,
   country: string,
   postcode: string,
-  type: AddressType,
-  isPrimary: boolean,
+  type?: AddressType,
   client_id?: number,
   contact_id?: number
   error?: {}
