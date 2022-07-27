@@ -103,7 +103,7 @@ export interface IExtraApplicationData {
 export interface IAddress {
   address_line_1: string,
   premises?: string,
-  locality: string,
+  locality?: string,
   country: string,
   postcode: string,
   type: AddressType
