@@ -4,7 +4,6 @@ import { Models } from "./model/model.index";
 import { ApplicationRouter } from "./route/application.router";
 import { ClientRouter } from "./route/client.router";
 import { sequelize } from "./util/sequelize";
-import {MongoosClass} from "./util/MongoDB"
 const app = express();
 const port = 8080; // default port to listen
 
@@ -15,10 +14,6 @@ const port = 8080; // default port to listen
 
   await sequelize.addModels(Models);
   await sequelize.sync();
-  
-  await MongoosClass.StoreDraftApplication();
-  //await sequelize.addModels(Models);
-  //await sequelize.sync({force: true});
 
   app.use(bodyParser.json({ limit: "20mb" })); /* {limit: "20mb"} */
   app.use("/application", ApplicationRouter);
@@ -28,7 +23,7 @@ const port = 8080; // default port to listen
   });
   // define a route handler for the default home page
   app.get("/", (req, res) => {
-    res.send("Hello");
+    res.send("Hello world!");
   });
   // start the Express server
 })();

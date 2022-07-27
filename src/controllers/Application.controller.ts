@@ -4,46 +4,55 @@ import { IApplication } from '../interfaces/IApplication';
 import { Client } from '../model/Client';
 import { sequelize } from '../util/sequelize';
 import { Website } from '../model/website';
+import { ClientContact } from '../model/ClientContact';
+import { Address } from '../model/Address';
 
 export class Application {
-<<<<<<< HEAD
   PostApplication = async (req: Request, res: Response) => {
     const application: IApplication = req.body;
-    console.log("good job",application);
+    console.log('good job', application);
     if (JSON.stringify(application.error) !== JSON.stringify({})) {
-      await MongoosClass.StoreDraftApplication(application);
-       
+      // await MongoosClass.StoreDraftApplication(application);
+
       // not completed
       // Shakir
-      console.log("yes");
+      await sequelize
+        .sync()
+        .then((client) => {
+          Client.create({
+            business_name: application.business_type.company_name,
+            trading_name: application.business_type.trading_name,
+            business_type: application.business_type.business_type,
+            company_registration_number:
+              application.business_type.company_number,
+          });
+
+          console.log('results', client);
+        })
+        .then((result) => {
+          Website.create({
+            urls: application.business_details.website,
+            client_id: 1,
+          });
+          console.log('results', result);
+        })
+        .then((clientContact) => {
+          ClientContact.create({
+            title: application.business_owner_details[0].title,
+            first_name: application.business_owner_details[0].first_name,
+          })
+          console.log('results', clientContact);
+        })
+
+      console.log('yes');
     } else {
-        console.log("not yet");
-     await sequelize.sync().then((result) => {
-        return Website.create({ urls: application.business_details.website, client_id: 1 });
-        console.log("results",result);
-      });
+      console.log('not yet');
+
       // Relational DB logic ()
       // Draft application should be deleted from MongoDB
       // Store Extra Data in Mongo
       // completed
       // Ashraf
-=======
-    PostApplication = async (req: Request, res: Response) => {
-        const application: IApplication = req.body;
-        if(JSON.stringify(application.error) !== JSON.stringify({})) {
-            await MongoosClass.StoreDraftApplication();
-            // not completed
-            // Shakir
-        } else {
-            // Relational DB logic ()
-            // Draft application should be deleted from MongoDB
-            // Store Extra Data in Mongo
-            // completed
-            // Ashraf
-        }
-
-        return res.send(application);
->>>>>>> 81f26bd7be3a6eac5e4e8821e16c637fa337a0f1
     }
 
     return res.send(application);
