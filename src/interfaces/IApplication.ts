@@ -1,5 +1,3 @@
-import internal from "stream"
-
 export interface IApplication {
   client_id?: number,
   business_type: IBusinessType, // half an hour -> an hour

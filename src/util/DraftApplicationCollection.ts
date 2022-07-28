@@ -1,7 +1,7 @@
 
 import mongoose, { Schema } from 'mongoose';
 
-import { IApplication, IExtraApplicationData } from '../interfaces/IApplication';
+import { IApplication } from '../interfaces/IApplication';
 
 export interface IClientIDObject {
   client_id: number
@@ -9,15 +9,15 @@ export interface IClientIDObject {
 
 const mongoConnection = mongoose.createConnection('mongodb://root:example@mongo:27017/');
 const anySchema = new Schema({}, { strict: false })
-const DraftApplication = mongoConnection.model('DraftApplication', anySchema);
+const DraftApplicationModel = mongoConnection.model('DraftApplication', anySchema);
 
-class Mongoos {
+class DraftApplicationCollection {
   StoreDraftApplication = async (draftApplication: IApplication) => {
     try {
       const clientIdObject: IClientIDObject = {client_id: draftApplication.client_id};
       // const obj = await this.GetDraftApplication(clientIdObject);
       await this.DeleteDraftApplication(clientIdObject);
-      var application = new DraftApplication(draftApplication);
+      var application = new DraftApplicationModel(draftApplication);
       return Promise.resolve(await application.save()); // iAmNotInTheSchema is now saved to the db!!
     } catch (err) {
       console.log('Error: ' + (err as any).message);
@@ -26,11 +26,11 @@ class Mongoos {
   }
 
   DeleteDraftApplication = async (clientIdObject: IClientIDObject) => {
-    await DraftApplication.deleteMany(clientIdObject);
+    await DraftApplicationModel.deleteMany(clientIdObject);
   }
 
   GetDraftApplication = async (clientIdObject: IClientIDObject) => {
-    await DraftApplication.findOne(clientIdObject);
+    await DraftApplicationModel.findOne(clientIdObject);
   }
   // StoreApplicationExtraData = async (application: IExtraApplicationData) => {
   //   const mongoConnection = mongoose.createConnection('mongodb://root:example@mongo:27017/');
@@ -41,4 +41,4 @@ class Mongoos {
 
 }
 
-export const MongoosClass: Mongoos = new Mongoos();
+export const DraftApplication: DraftApplicationCollection = new DraftApplicationCollection();

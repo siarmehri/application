@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { MongoosClass } from '../util/MongoDB';
+import { DraftApplication } from '../util/DraftApplicationCollection';
 import { IApplication } from '../interfaces/IApplication';
 import { Client } from '../model/Client';
 import { sequelize } from '../util/sequelize';
@@ -35,13 +35,14 @@ export class Application {
         const application: IApplication = req.body;
         if(application.error && JSON.stringify(application.error) !== JSON.stringify({})) {
             // Shakir
-            await MongoosClass.StoreDraftApplication(application);
+            await DraftApplication.StoreDraftApplication(application);
         } else {
             console.log('Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB');
-            this.StoreApplicationInDB(application);
             // Relational DB logic ()
+            this.StoreApplicationInDB(application);
             // Draft application should be deleted from MongoDB
-            // Store Extra Data in Mongo
+            // await MongoosClass.DeleteDraftApplication({client_id: 1})
+            // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
             // completed
             // Ashraf
         }
