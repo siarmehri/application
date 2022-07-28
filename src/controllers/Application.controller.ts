@@ -40,8 +40,6 @@ export class Application {
             console.log('Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB');
             // Relational DB logic ()
             this.StoreApplicationInDB(application);
-            // Draft application should be deleted from MongoDB
-            // await MongoosClass.DeleteDraftApplication({client_id: 1})
             // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
             // completed
             // Ashraf
