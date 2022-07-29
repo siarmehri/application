@@ -20,6 +20,15 @@ import { EmailAddress } from './EmailAddress';
 import { PhoneNumber } from './PhoneNumber';
 import { Website } from './website';
 
+export interface IClient {
+  id: number;
+  business_name: string;
+  trading_name: string;
+  business_type: string;
+  company_registration_number: string;
+  country: string;
+}
+
 @Scopes(() => ({
   full: {
     attributes: {
@@ -79,17 +88,17 @@ import { Website } from './website';
       },
     ],
     /* include: [{
-      attributes: ['min_email_contacts', 'min_sms_contacts', 'min_letter_contacts', 'action_delay'],
-      model: CaseTypeSla
-    },
-    {
-      model: Mode,
-      through: { attributes: [] }
-    },
-    {
-      model: Strategy,
-      through: { attributes: [] }
-    }] */
+attributes: ['min_email_contacts', 'min_sms_contacts', 'min_letter_contacts', 'action_delay'],
+model: CaseTypeSla
+},
+{
+model: Mode,
+through: { attributes: [] }
+},
+{
+model: Strategy,
+through: { attributes: [] }
+}] */
   },
 }))
 @Table({ tableName: 'client' })
@@ -167,7 +176,7 @@ export class Client extends Model<Client> {
   updated_at: Date = new Date();
 
   @HasMany(() => ClientContact)
-  clientContacts: [ClientContact];
+  clientContacts: ClientContact[];
 
   @HasMany(() => Address)
   addresses: Address[];
@@ -182,36 +191,49 @@ export class Client extends Model<Client> {
   websites: Website[];
 
   // Ashraf Khan please create IClient interfaces to make your life easier.
-  public static async SaveClient(clientData: any, transaction: Transaction) {
+  public static async SaveClient(
+    clientData: IClient,
+    transaction: Transaction
+  ) {
     try {
-      return Promise.resolve(await Client.create(
-        clientData,
-        { transaction: transaction }));
+      return Promise.resolve(
+        await Client.create(clientData, { transaction: transaction })
+      );
     } catch (err) {
       console.log((err as any).message);
       return Promise.reject(err);
     }
   }
-  static async FindOne(clientData: any, transaction: Transaction) {
+  static async FindOne(clientData: IClient, transaction: Transaction) {
     try {
-      return Promise.resolve(await Client.findOne({
-        where: {
-          id: clientData.id
-        }, transaction: transaction
-      }));
+      return Promise.resolve(
+        await Client.findOne({
+          where: {
+            id: clientData.id,
+          },
+          transaction: transaction,
+        })
+      );
     } catch (err) {
       return Promise.reject(err);
     }
   }
-  public static async UpdateOrCreate(clientData: any, transaction: Transaction) {
+  public static async UpdateOrCreate(
+    clientData: IClient,
+    transaction: Transaction
+  ) {
     try {
       const client = await this.FindOne(clientData, transaction);
-      return (!client) ?
-        Promise.resolve(await Client.SaveClient(clientData, transaction)) :
-        Promise.resolve(Client.update(clientData, {
-          where: { id: clientData.id }, transaction: transaction
-        }));
+      return !client
+        ? Promise.resolve(await Client.SaveClient(clientData, transaction))
+        : Promise.resolve(
+            Client.update(clientData, {
+              where: { id: clientData.id },
+              transaction: transaction,
+            })
+          );
     } catch (err) {
+     
       return Promise.reject(err);
     }
   }

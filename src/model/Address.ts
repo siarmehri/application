@@ -5,6 +5,7 @@ import {
 } from 'sequelize-typescript';
 import { Client } from './Client';
 import { ClientContact } from './ClientContact';
+import { Transaction } from 'sequelize';
 
 @Table({ tableName: 'address' })
 export class Address extends Model<Address> {
@@ -13,19 +14,19 @@ export class Address extends Model<Address> {
   @Column
   public id: number;
 
-  @AllowNull(false)
+  
   @Column(DataType.ENUM("primary", "secondary"))
   type: string;
 
-  @AllowNull(false)
+  @Default('false')
   @Column
   is_primary: boolean;
 
-  @AllowNull(false)
+
   @Column
   address_line: string;
 
-  @AllowNull(false)
+
   @Column
   premises: string;
 
@@ -61,6 +62,60 @@ export class Address extends Model<Address> {
 
   @BelongsTo(() => ClientContact)
   client_contact: ClientContact;
+
+  public static async SaveClient(
+    addressData: any,
+    transaction: Transaction
+  ) {
+    try {
+      return Promise.resolve(
+        await Address.create(addressData, { transaction: transaction })
+      );
+    } catch (err) {
+      console.log((err as any).message);
+      return Promise.reject(err);
+    }
+  }
+  static async FindOne(addressData: any, transaction: Transaction) {
+    try {
+      return Promise.resolve(
+        await Address.findOne({
+          where: {
+            id: addressData.client_id,
+          },
+          transaction: transaction,
+        })
+      );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+  public static async UpdateOrCreate(
+    addressData: any,
+    transaction: Transaction
+  ) {
+    try {
+      const address = await this.FindOne(addressData, transaction);
+      return !address
+        ? Promise.resolve(await Address.SaveClient(addressData, transaction))
+        : Promise.resolve(
+            Address.update(addressData, {
+              where: { id:  addressData.client_id },
+              transaction: transaction,
+            })
+          );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
+
+
+
+
+
+
+
 }
 
 

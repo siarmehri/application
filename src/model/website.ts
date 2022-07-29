@@ -3,8 +3,15 @@ import {
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
   Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
 } from 'sequelize-typescript';
+import { Transaction } from 'sequelize';
 import { Client } from './Client';
 
+export interface IWebsite {
+  
+  urls: string;
+  client_id: string;
+
+}
 
 @Table({ tableName: 'website' })
 export class Website extends Model<Website> {
@@ -32,6 +39,53 @@ export class Website extends Model<Website> {
 
   @BelongsTo(() => Client)
   client: Client;
+
+  public static async SaveClient(
+    websiteData: any,
+    transaction: Transaction
+  ) {
+    try {
+      return Promise.resolve(
+        await Website.create(websiteData, { transaction: transaction })
+      );
+    } catch (err) {
+      console.log((err as any).message);
+    return Promise.reject(err);
+    }
+  }
+  static async FindOne(websiteData: any, transaction: Transaction) {
+    try {
+      return Promise.resolve(
+        await Website.findOne({
+          where: {
+            id: websiteData.client_id,
+          },
+          transaction: transaction,
+        })
+      );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+  public static async UpdateOrCreate(
+    websiteData: any,
+    transaction: Transaction
+  ) {
+    try {
+      const website = await this.FindOne(websiteData, transaction);
+      return !website
+        ? Promise.resolve(await Website.SaveClient(websiteData, transaction))
+        : Promise.resolve(
+            Website.update(websiteData, {
+              where: { id: websiteData.client_id },
+              transaction: transaction,
+            })
+          );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
 }
 
 

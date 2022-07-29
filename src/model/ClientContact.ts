@@ -11,6 +11,7 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
+import { Transaction } from 'sequelize';
 import { Address } from './Address';
 import { Client } from './Client';
 import { EmailAddress } from './EmailAddress';
@@ -74,4 +75,54 @@ export class ClientContact extends Model<ClientContact> {
   phonenumbers: [PhoneNumber];
   @HasMany(() => EmailAddress)
   emails: [EmailAddress];
+
+  public static async SaveClient(
+    clientContactData: any,
+    transaction: Transaction
+  ) {
+    try {
+      return Promise.resolve(
+        await ClientContact.create(clientContactData, {
+          transaction: transaction,
+        })
+      );
+    } catch (err) {
+      console.log((err as any).message);
+      return Promise.reject(err);
+    }
+  }
+  static async FindOne(clientContactData: any, transaction: Transaction) {
+    try {
+      return Promise.resolve(
+        await ClientContact.findOne({
+          where: {
+            client_id:clientContactData.id
+          },
+          transaction: transaction,
+        })
+      );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+  public static async UpdateOrCreate(
+    clientContactData: any,
+    transaction: Transaction
+  ) {
+    try {
+      const data = await this.FindOne(clientContactData, transaction);
+      return !data
+        ? Promise.resolve(
+            await ClientContact.SaveClient(clientContactData, transaction)
+          )
+        : Promise.resolve(
+            ClientContact.update(clientContactData, {
+              where: { client_id:clientContactData.id },
+              transaction: transaction,
+            })
+          );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
 }
