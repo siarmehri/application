@@ -76,7 +76,7 @@ export class ClientContact extends Model<ClientContact> {
   @HasMany(() => EmailAddress)
   emails: [EmailAddress];
 
-  public static async SaveClient(
+  public static async Save(
     clientContactData: any,
     transaction: Transaction
   ) {
@@ -91,12 +91,12 @@ export class ClientContact extends Model<ClientContact> {
       return Promise.reject(err);
     }
   }
-  static async FindOne(clientContactData: any, transaction: Transaction) {
+  static async FindOne(id: any, transaction: Transaction) {
     try {
       return Promise.resolve(
         await ClientContact.findOne({
           where: {
-            client_id:clientContactData.id
+            id: id
           },
           transaction: transaction,
         })
@@ -110,17 +110,18 @@ export class ClientContact extends Model<ClientContact> {
     transaction: Transaction
   ) {
     try {
-      const data = await this.FindOne(clientContactData, transaction);
-      return !data
-        ? Promise.resolve(
-            await ClientContact.SaveClient(clientContactData, transaction)
-          )
-        : Promise.resolve(
-            ClientContact.update(clientContactData, {
-              where: { client_id:clientContactData.id },
-              transaction: transaction,
-            })
-          );
+      const data = (clientContactData.id) ? await this.FindOne(clientContactData.id, transaction) : null;
+      if (!data) {
+        return Promise.resolve(
+          await ClientContact.Save(clientContactData, transaction)
+        );
+      } else {
+        await ClientContact.update(clientContactData, {
+          where: { id: data.id },
+          transaction: transaction,
+        });
+        return Promise.resolve(await ClientContact.FindOne(data.id, transaction));
+      }
     } catch (err) {
       return Promise.reject(err);
     }

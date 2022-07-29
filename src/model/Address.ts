@@ -14,7 +14,7 @@ export class Address extends Model<Address> {
   @Column
   public id: number;
 
-  
+
   @Column(DataType.ENUM("primary", "secondary"))
   type: string;
 
@@ -63,7 +63,7 @@ export class Address extends Model<Address> {
   @BelongsTo(() => ClientContact)
   client_contact: ClientContact;
 
-  public static async SaveClient(
+  public static async Save(
     addressData: any,
     transaction: Transaction
   ) {
@@ -76,12 +76,12 @@ export class Address extends Model<Address> {
       return Promise.reject(err);
     }
   }
-  static async FindOne(addressData: any, transaction: Transaction) {
+  static async FindOne(id: number, transaction: Transaction) {
     try {
       return Promise.resolve(
         await Address.findOne({
           where: {
-            id: addressData.client_id,
+            id: id,
           },
           transaction: transaction,
         })
@@ -95,15 +95,18 @@ export class Address extends Model<Address> {
     transaction: Transaction
   ) {
     try {
-      const address = await this.FindOne(addressData, transaction);
-      return !address
-        ? Promise.resolve(await Address.SaveClient(addressData, transaction))
-        : Promise.resolve(
-            Address.update(addressData, {
-              where: { id:  addressData.client_id },
-              transaction: transaction,
-            })
-          );
+      const address = (addressData.id) ? await this.FindOne(addressData.id, transaction) : null;
+      if (!address) {
+        return Promise.resolve(await Address.Save(addressData, transaction));
+      } else {
+        Promise.resolve(
+          await Address.update(addressData, {
+            where: { id: addressData.id },
+            transaction: transaction,
+          })
+        );
+        return Promise.resolve(await Address.FindOne(address.id, transaction));
+      }
     } catch (err) {
       return Promise.reject(err);
     }

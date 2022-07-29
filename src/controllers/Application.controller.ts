@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { DraftApplication } from '../util/DraftApplicationCollection';
-import { IApplication } from '../interfaces/IApplication';
+import { IAddress, IApplication, IBusinessOwnerDetails } from '../interfaces/IApplication';
 import { Client } from '../model/Client';
 import { sequelize } from '../util/sequelize';
 import { Website } from '../model/website';
@@ -37,24 +37,33 @@ export class Application {
       client_id: application.client_id,
     };
   };
-  GetClientContactFromApplication = (application: IApplication): any => {
-    return (
-      application.business_owner_details.forEach((element: any) => {
+  GetClientContactFromBusinessOwnerDetails = (businessOwnerDetail: IBusinessOwnerDetails): any => {
       return {
-        id:element.id,
+        id: businessOwnerDetail?.id,
+        title: businessOwnerDetail.title,
+        first_name: businessOwnerDetail.first_name,
+        last_name: businessOwnerDetail.last_name,
+        birth_date: businessOwnerDetail.date_of_birth,
+        nationality: businessOwnerDetail.nationality,
+        country_of_residence: businessOwnerDetail.country_of_residence,
+        share_holding_percentage: businessOwnerDetail.ownership_percentage,
+        role: businessOwnerDetail.job_title,
+        place_of_birth: businessOwnerDetail.place_of_birth
+      };
+  };
+
+  /*  return {
+        id: element?.id,
         title: element.title,
         first_name: element.first_name,
         last_name: element.last_name,
-        birth_date: element.birth_date,
+        birth_date: element.date_of_birth,
         nationality: element.nationality,
         country_of_residence: element.country_of_residence,
-        share_holding_percentage: element.share_holding_percentage,
+        share_holding_percentage: element.ownership_percentage,
         role: element.job_title,
         place_of_birth: element.place_of_birth,
-      };
-    })
-    )
-  };
+      }; */
 
   StoreApplicationInDB = async (application: IApplication) => {
     try {
@@ -71,10 +80,15 @@ export class Application {
           this.GetAddressFromApplication(application),
           transaction
         );
-        const clientContact = await ClientContact.UpdateOrCreate(
+
+        application.business_owner_details.forEach( async (element: IBusinessOwnerDetails) => {
+          const clientContact = await ClientContact.UpdateOrCreate(this.GetClientContactFromBusinessOwnerDetails(element), transaction);
+          await Address.UpdateOrCreate(this.GetAddress(element.address, 'secondary', false, null, clientContact.id), transaction);
+        });
+        /* const clientContact = await ClientContact.UpdateOrCreate(
           this.GetClientContactFromApplication(application),
           transaction
-        );
+        ); */
       });
     } catch (err) {
       return Promise.reject(err);
@@ -87,7 +101,7 @@ export class Application {
       JSON.stringify(application.error) !== JSON.stringify({})
     ) {
       // Shakir
-      await DraftApplication.StoreDraftApplication(application);
+      // await DraftApplication.StoreDraftApplication(application);
     } else {
       console.log(
         'Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB'
@@ -101,6 +115,20 @@ export class Application {
 
     return res.send(application);
   };
+
+  GetAddress = (address: IAddress, type: string, isPrimary: boolean, client_id: number = null, client_contact_id: number = null) => {
+    return {
+      type: type,
+      is_primary: isPrimary,
+      address_line: address.address_line_1,
+      premises: address.premises,
+      locality: address.locality,
+      country: address.country,
+      post_code: address.postcode,
+      client_id: client_id,
+      client_contact_id: client_contact_id
+    }
+  }
 
   GetApplication = async (req: Request, res: Response) => {
     // take client_id from jwt Ashraf ->
