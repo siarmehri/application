@@ -8,6 +8,7 @@ import { ClientContact } from '../model/ClientContact';
 import { Address } from '../model/Address';
 import { Transaction } from 'sequelize';
 import { IClient } from '../model/Client';
+import { ClientAddress } from '../model/ClientAddress';
 
 export class Application {
   GetClientFromApplication = (application: IApplication): IClient => {
@@ -18,6 +19,8 @@ export class Application {
       business_type: application.business_type.business_type,
       company_registration_number: application.business_type.company_number,
       country: application.business_type.registered_business_country,
+      vat_number: application.business_type.vat_number,
+      date_of_incorporation: application.business_type.date_of_incorporation
     };
   };
   GetWebsiteFromApplication = (application: IApplication): any => {
@@ -38,18 +41,18 @@ export class Application {
     };
   };
   GetClientContactFromBusinessOwnerDetails = (businessOwnerDetail: IBusinessOwnerDetails): any => {
-      return {
-        id: businessOwnerDetail?.id,
-        title: businessOwnerDetail.title,
-        first_name: businessOwnerDetail.first_name,
-        last_name: businessOwnerDetail.last_name,
-        birth_date: businessOwnerDetail.date_of_birth,
-        nationality: businessOwnerDetail.nationality,
-        country_of_residence: businessOwnerDetail.country_of_residence,
-        share_holding_percentage: businessOwnerDetail.ownership_percentage,
-        role: businessOwnerDetail.job_title,
-        place_of_birth: businessOwnerDetail.place_of_birth
-      };
+    return {
+      id: businessOwnerDetail?.id,
+      title: businessOwnerDetail.title,
+      first_name: businessOwnerDetail.first_name,
+      last_name: businessOwnerDetail.last_name,
+      birth_date: businessOwnerDetail.date_of_birth,
+      nationality: businessOwnerDetail.nationality,
+      country_of_residence: businessOwnerDetail.country_of_residence,
+      share_holding_percentage: businessOwnerDetail.ownership_percentage,
+      role: businessOwnerDetail.job_title,
+      place_of_birth: businessOwnerDetail.place_of_birth
+    };
   };
 
   /*  return {
@@ -68,11 +71,34 @@ export class Application {
   StoreApplicationInDB = async (application: IApplication) => {
     try {
       return await sequelize.transaction(async (transaction: Transaction) => {
+        // Storing Business as a Client in our client table
         const client = await Client.UpdateOrCreate(
           this.GetClientFromApplication(application),
           transaction
         );
-        const businessWebsite = await Website.UpdateOrCreate(
+
+        const clientAddress = await ClientAddress.FindOne(client.id, transaction);
+
+        // Address for the client which is a business address
+        if(clientAddress instanceof ClientAddress) {
+          application.business_details.address.id = clientAddress.address_id;
+          await Address.UpdateOrCreate(
+            this.GetAddress(application.business_details.address, 'secondary', false),
+            transaction
+          );
+        } else {
+          const address = await Address.UpdateOrCreate(
+            this.GetAddress(application.business_details.address, 'secondary', false),
+            transaction
+          );
+          ClientAddress.CreateOrReturn(client.id, address.id, transaction);
+        }
+
+
+        return Promise.resolve({message: 'ok'});
+
+
+        /* const businessWebsite = await Website.UpdateOrCreate(
           this.GetWebsiteFromApplication(application),
           transaction
         );
@@ -84,7 +110,7 @@ export class Application {
         application.business_owner_details.forEach( async (element: IBusinessOwnerDetails) => {
           const clientContact = await ClientContact.UpdateOrCreate(this.GetClientContactFromBusinessOwnerDetails(element), transaction);
           await Address.UpdateOrCreate(this.GetAddress(element.address, 'secondary', false, null, clientContact.id), transaction);
-        });
+        }); */
         /* const clientContact = await ClientContact.UpdateOrCreate(
           this.GetClientContactFromApplication(application),
           transaction
@@ -107,7 +133,8 @@ export class Application {
         'Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB'
       );
       // Relational DB logic ()
-      this.StoreApplicationInDB(application);
+      const result = await this.StoreApplicationInDB(application);
+
       // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
       // completed
       // Ashraf
@@ -116,17 +143,16 @@ export class Application {
     return res.send(application);
   };
 
-  GetAddress = (address: IAddress, type: string, isPrimary: boolean, client_id: number = null, client_contact_id: number = null) => {
+  GetAddress = (address: IAddress, type: string, isPrimary: boolean) => {
     return {
+      id: address.id,
       type: type,
       is_primary: isPrimary,
       address_line: address.address_line_1,
       premises: address.premises,
       locality: address.locality,
       country: address.country,
-      post_code: address.postcode,
-      client_id: client_id,
-      client_contact_id: client_contact_id
+      post_code: address.postcode
     }
   }
 

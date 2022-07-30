@@ -69,10 +69,9 @@ export class ClientContact extends Model<ClientContact> {
   @BelongsTo(() => Client)
   client: Client;
 
-  @HasMany(() => Address)
-  addresses: [Address];
   @HasMany(() => PhoneNumber)
-  phonenumbers: [PhoneNumber];
+  phoneNumbers: [PhoneNumber];
+
   @HasMany(() => EmailAddress)
   emails: [EmailAddress];
 

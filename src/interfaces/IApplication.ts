@@ -29,7 +29,7 @@ export interface IBusinessType {
   registered_business_country: string,
   company_number: string,
   business_type: BusinessType,
-  date_of_incorporation_or_formation: Date,
+  date_of_incorporation: Date,
   trading_name: string,
   vat_number: string,
   company_document?: File, // Mandatory
@@ -111,7 +111,7 @@ export interface IAddress {
   postcode: string,
   type?: AddressType,
   client_id?: number,
-  contact_id?: number
+  contact_id?: number,
   error?: {}
 }
 

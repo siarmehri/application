@@ -1,11 +1,14 @@
 import {
   Table, Column, Model, Default,
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
-  Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
+  Sequelize, DataType, ForeignKey, BelongsTo,
+  BelongsToMany
 } from 'sequelize-typescript';
 import { Client } from './Client';
 import { ClientContact } from './ClientContact';
 import { Transaction } from 'sequelize';
+import { ClientAddress } from './ClientAddress';
+import { ClientContactAddress } from './ClientContactAddress';
 
 @Table({ tableName: 'address' })
 export class Address extends Model<Address> {
@@ -14,18 +17,16 @@ export class Address extends Model<Address> {
   @Column
   public id: number;
 
-
   @Column(DataType.ENUM("primary", "secondary"))
   type: string;
 
-  @Default('false')
+  @Default(false)
   @Column
   is_primary: boolean;
 
 
   @Column
   address_line: string;
-
 
   @Column
   premises: string;
@@ -37,15 +38,7 @@ export class Address extends Model<Address> {
   country: string;
 
   @Column
-  post_code: number;
-
-  @ForeignKey(() => Client)
-  @Column
-  client_id: number;
-
-  @ForeignKey(() => ClientContact)
-  @Column
-  client_contact_id: number;
+  post_code: string;
 
   @Default(Sequelize.fn('now'))
   @Column
@@ -57,11 +50,11 @@ export class Address extends Model<Address> {
   @UpdatedAt
   updated_at: Date = new Date();
 
-  @BelongsTo(() => Client)
-  client: Client;
+  @BelongsToMany(() => Client, () => ClientAddress)
+  clients: Client[];
 
-  @BelongsTo(() => ClientContact)
-  client_contact: ClientContact;
+  @BelongsToMany(() => ClientContact, () => ClientContactAddress)
+  clientContacts: ClientContact[];
 
   public static async Save(
     addressData: any,
@@ -111,14 +104,6 @@ export class Address extends Model<Address> {
       return Promise.reject(err);
     }
   }
-
-
-
-
-
-
-
-
 }
 
 

@@ -31,7 +31,7 @@ export class Validator {
         registered_business_country: 'UK',
         company_number: '1232abc',
         business_type: BusinessType.LIMITED,
-        date_of_incorporation_or_formation: new Date(2022, 3, 13),
+        date_of_incorporation: new Date(2022, 3, 13),
         trading_name: 'Devondemand UK Ltd.',
         vat_number: "9898989ab",
       },

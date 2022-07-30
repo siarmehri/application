@@ -12,6 +12,7 @@ import {
   AllowNull,
   Scopes,
   HasMany,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { Transaction } from 'sequelize';
 import { Address } from './Address';
@@ -19,14 +20,17 @@ import { ClientContact } from './ClientContact';
 import { EmailAddress } from './EmailAddress';
 import { PhoneNumber } from './PhoneNumber';
 import { Website } from './website';
+import { ClientAddress } from './ClientAddress';
 
 export interface IClient {
-  id: number;
-  business_name: string;
-  trading_name: string;
-  business_type: string;
-  company_registration_number: string;
-  country: string;
+  id: number,
+  business_name: string,
+  trading_name: string,
+  business_type: string,
+  company_registration_number: string,
+  country: string,
+  vat_number: string,
+  date_of_incorporation: Date
 }
 
 @Scopes(() => ({
@@ -45,6 +49,7 @@ export interface IClient {
             attributes: {
               exclude: ['updated_at', 'created_at'],
             },
+            through: { attributes: [] },
             model: Address,
           },
           {
@@ -65,7 +70,7 @@ export interface IClient {
         attributes: {
           exclude: ['updated_at', 'created_at'],
         },
-
+        through: { attributes: [] },
         model: Address,
       },
       {
@@ -86,21 +91,10 @@ export interface IClient {
         },
         model: Website,
       },
-    ],
-    /* include: [{
-attributes: ['min_email_contacts', 'min_sms_contacts', 'min_letter_contacts', 'action_delay'],
-model: CaseTypeSla
-},
-{
-model: Mode,
-through: { attributes: [] }
-},
-{
-model: Strategy,
-through: { attributes: [] }
-}] */
-  },
+    ]
+  }
 }))
+
 @Table({ tableName: 'client' })
 export class Client extends Model<Client> {
   @AutoIncrement
@@ -145,7 +139,7 @@ export class Client extends Model<Client> {
   country: string;
 
   @Column
-  vat_number: number;
+  vat_number: string;
 
   @Column
   date_of_incorporation: Date;
@@ -178,9 +172,6 @@ export class Client extends Model<Client> {
   @HasMany(() => ClientContact)
   clientContacts: ClientContact[];
 
-  @HasMany(() => Address)
-  addresses: Address[];
-
   @HasMany(() => PhoneNumber)
   phoneNumbers: PhoneNumber[];
 
@@ -190,8 +181,11 @@ export class Client extends Model<Client> {
   @HasMany(() => Website)
   websites: Website[];
 
+  @BelongsToMany(() => Address, () => ClientAddress)
+  addresses: Address[];
+
   // Ashraf Khan please create IClient interfaces to make your life easier.
-  public static async SaveClient(
+  public static async Save(
     clientData: IClient,
     transaction: Transaction
   ) {
@@ -204,12 +198,12 @@ export class Client extends Model<Client> {
       return Promise.reject(err);
     }
   }
-  static async FindOne(clientData: IClient, transaction: Transaction) {
+  static async FindOne(id: number, transaction: Transaction) {
     try {
       return Promise.resolve(
         await Client.findOne({
           where: {
-            id: clientData.id,
+            id
           },
           transaction: transaction,
         })
@@ -223,17 +217,20 @@ export class Client extends Model<Client> {
     transaction: Transaction
   ) {
     try {
-      const client = await this.FindOne(clientData, transaction);
-      return !client
-        ? Promise.resolve(await Client.SaveClient(clientData, transaction))
-        : Promise.resolve(
-            Client.update(clientData, {
-              where: { id: clientData.id },
-              transaction: transaction,
-            })
-          );
+      const client = (clientData.id) ? await this.FindOne(clientData.id, transaction): null;
+      if(!client) {
+        return Promise.resolve(await Client.Save(clientData, transaction));
+      } else {
+        Promise.resolve(
+          Client.update(clientData, {
+            where: { id: clientData.id },
+            transaction: transaction,
+          })
+        );
+
+        return Promise.resolve(await this.FindOne(client.id, transaction));
+      }
     } catch (err) {
-     
       return Promise.reject(err);
     }
   }

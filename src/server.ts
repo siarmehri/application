@@ -12,8 +12,8 @@ const port = 8080; // default port to listen
     console.log(`server started at http://localhost:${port}`);
   });
 
-  await sequelize.addModels(Models);
-  /// await sequelize.sync();
+  sequelize.addModels(Models);
+  await sequelize.sync();
 
   app.use(bodyParser.json({ limit: "20mb" })); /* {limit: "20mb"} */
   app.use("/application", ApplicationRouter);
