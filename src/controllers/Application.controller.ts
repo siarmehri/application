@@ -84,8 +84,7 @@ export class Application {
           this.GetClientFromApplication(application),
           transaction
         );
-        application.business_owner_details.forEach(
-          async (element: IBusinessOwnerDetails) => {
+        for (let element of application.business_owner_details) {
             const clientContact = await ClientContact.UpdateOrCreate(
               this.GetClientContactFromBusinessOwnerDetails(element),
               transaction
@@ -102,18 +101,17 @@ export class Application {
               );
             } else {
               console.log('address', element.address);
-              const contactaddress = await Address.UpdateOrCreate(
+              const contactAddress = await Address.UpdateOrCreate(
                 this.GetAddress(element.address, 'secondary', false),
                 transaction
               );
               await ClientContactAddress.CreateOrReturn(
                 clientContact.id,
-                contactaddress.id,
+                contactAddress.id,
                 transaction
               );
             }
-          }
-        );
+        }
 
         const clientAddress = await ClientAddress.FindOne(
           client.id,
