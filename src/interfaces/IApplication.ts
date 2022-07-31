@@ -2,7 +2,7 @@ export interface IApplication {
   client_id?: number,
   business_type: IBusinessType, // half an hour -> an hour
   business_details: IBusinessDetails,
-  business_owner_details: [IBusinessOwnerDetails],
+  business_owner_details: IBusinessOwnerDetails[],
   bank_details: IBankDetails,
   error?: {}
 }
