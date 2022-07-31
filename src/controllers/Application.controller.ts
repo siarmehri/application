@@ -127,7 +127,7 @@ export class Application {
       JSON.stringify(application.error) !== JSON.stringify({})
     ) {
       // Shakir
-      // await DraftApplication.StoreDraftApplication(application);
+      await DraftApplication.StoreDraftApplication(application);
     } else {
       console.log(
         'Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB'

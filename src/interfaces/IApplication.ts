@@ -15,15 +15,13 @@ export enum BusinessType {
   CHARITY = "Charity" // At least one owner -> removed percentages
 }
 
-export interface IGetLink {
+
+export interface IFileUploadMechanism {
   for_field: string, //company_document, bank_document,
-  file_format: string //pdf, jpeg, jpg, png
+  file_format: string, //pdf, jpeg, jpg, png
+  url: string,
+  path: string
 }
-
-export interface IPutLink {
-  url: string
-}
-
 export interface IBusinessType {
   company_name: string,
   registered_business_country: string,
@@ -32,13 +30,12 @@ export interface IBusinessType {
   date_of_incorporation: Date,
   trading_name: string,
   vat_number: string,
-  company_document?: File, // Mandatory
-  certificate_of_incorporation?: File, //Mandatory
-  bank_document?: File,
-  processing_history?: File,
-  Business_invoice?: File,
-  get_link?: IGetLink,
-  put_link?: IPutLink,
+  company_document?: IFileUploadMechanism, // Mandatory
+  certificate_of_incorporation?: IFileUploadMechanism, //Mandatory
+  bank_document?: IFileUploadMechanism,
+  processing_history?: IFileUploadMechanism,
+  business_invoice?: IFileUploadMechanism,
+  fileUploadNeeded?: IFileUploadMechanism, /// FE instruct BE for the current file to be uploaded
   error?: {}
 }
 
@@ -78,10 +75,9 @@ export interface IBusinessOwnerDetails {
   is_updated?: boolean,
   is_deleted?: boolean,
   is_inserted?: boolean,
-  proof_of_id?: File,
-  proof_of_address?: File,
-  get_link?: IGetLink
-  put_link?: IPutLink
+  proof_of_id?: IFileUploadMechanism,
+  proof_of_address?: IFileUploadMechanism,
+  fileUploadNeeded?: IFileUploadMechanism,
   error?: {}
 }
 
@@ -92,9 +88,8 @@ export interface IBankDetails {
   sort_code: string,
   BIC?: string,
   account_number: number,
-  business_bank_statement?: File, //Mandatory
-  get_link?: IGetLink
-  put_link?: IPutLink
+  business_bank_statement?: IFileUploadMechanism,
+  fileUploadNeeded?: IFileUploadMechanism,
   error?: {}
 }
 
