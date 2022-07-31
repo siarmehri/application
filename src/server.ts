@@ -3,6 +3,7 @@ import express from "express";
 import { Models } from "./model/model.index";
 import { ApplicationRouter } from "./route/application.router";
 import { ClientRouter } from "./route/client.router";
+import { FileRouter } from "./route/file.router";
 import { sequelize } from "./util/sequelize";
 import { umzug } from "./util/umzug";
 const app = express();
@@ -22,6 +23,8 @@ const port = 8080; // default port to listen
 
   app.use(bodyParser.json({ limit: "20mb" })); /* {limit: "20mb"} */
   app.use("/application", ApplicationRouter);
+  app.use("/file", FileRouter);
+
   app.use("/client", ClientRouter);
   app.get("/healthz", async (req, res) => {
     res.send('I am happy and healthy!\n');

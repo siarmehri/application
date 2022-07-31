@@ -10,14 +10,22 @@ You just need to be in docker folder of this project and have already cloned the
 In windows 10 follow the steps in the link below:
 https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/
 
+```
+export MYSQL_USERNAME_SWIPEN=swipen
+export MYSQL_PASSWORD_SWIPEN=secret
+export MYSQL_DATABASE_SWIPEN=application
+export MYSQL_HOST_SWIPEN=db
+export AWS_SWIPEN_DEV_BUCKET=s3-file-storing-dev
+```
+
 ***For the profile variables take affect source it by running the following***
 
 ```
 # Linux
-source .profile
+source ~/.profile
 
 # Mac
-source .bash_profile
+source ~/.bash_profile
 ```
 
 ***OR Logout/Login (Maybe this is the only way in Windows 10)***

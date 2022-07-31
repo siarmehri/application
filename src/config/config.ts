@@ -13,5 +13,11 @@ export const config = {
     database: process.env.MYSQL_DATABASE,
     host: process.env.MYSQL_HOST,
     //logging: (IsProduction()) ? false : true
+  },
+  aws: {
+    profile: process.env.AWS_PROFILE,
+    region: process.env.AWS_REGION,
+    api_version: process.env.AWS_API_VERSION,
+    swipen_bucket: process.env.AWS_SWIPEN_BUCKET
   }
 }
