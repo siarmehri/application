@@ -46,6 +46,18 @@ export class Bucket {
     }
   }
 
+  Upload = async (singedUrl: string, stream: Buffer) => {
+    try {
+      const response = await superagent
+        .put(singedUrl)
+        .set("Content-Type", "application/octet-stream")
+        .send(stream);
+      return Promise.resolve(response);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
   GetObject = async (filePath: string) => {
     try {
       const s3 = new AWS.S3({
