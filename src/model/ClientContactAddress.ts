@@ -43,13 +43,12 @@ export class ClientContactAddress extends Model<ClientContactAddress> {
     }
   }
 
-  static async FindOne(client_contact_id: number, address_id: number, transaction: Transaction) {
+  static async FindOne(client_contact_id: number, transaction: Transaction) {
     try {
       return Promise.resolve(
         await ClientContactAddress.findOne({
           where: {
-            client_contact_id,
-            address_id
+            client_contact_id
           },
           transaction: transaction,
         })
@@ -64,11 +63,11 @@ export class ClientContactAddress extends Model<ClientContactAddress> {
     transaction: Transaction
   ) {
     try {
-      const clientAddress = await this.FindOne(client_contact_id, address_id, transaction);
-      if(!clientAddress) {
+      const clientContactAddress = await this.FindOne(client_contact_id, transaction);
+      if(!clientContactAddress) {
         return Promise.resolve(await ClientContactAddress.Save(client_contact_id, address_id, transaction));
       } else {
-        return Promise.resolve(clientAddress);
+        return Promise.resolve(clientContactAddress);
       }
     } catch (err) {
       return Promise.reject(err);

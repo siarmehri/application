@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { DraftApplication } from '../util/DraftApplicationCollection';
-import { IAddress, IApplication, IBusinessOwnerDetails } from '../interfaces/IApplication';
+import {
+  IAddress,
+  IApplication,
+  IBusinessOwnerDetails,
+} from '../interfaces/IApplication';
 import { Client } from '../model/Client';
 import { sequelize } from '../util/sequelize';
 import { Website } from '../model/website';
@@ -9,6 +13,7 @@ import { Address } from '../model/Address';
 import { Transaction } from 'sequelize';
 import { IClient } from '../model/Client';
 import { ClientAddress } from '../model/ClientAddress';
+import { ClientContactAddress } from '../model/ClientContactAddress';
 
 export class Application {
   GetClientFromApplication = (application: IApplication): IClient => {
@@ -20,7 +25,7 @@ export class Application {
       company_registration_number: application.business_type.company_number,
       country: application.business_type.registered_business_country,
       vat_number: application.business_type.vat_number,
-      date_of_incorporation: application.business_type.date_of_incorporation
+      date_of_incorporation: application.business_type.date_of_incorporation,
     };
   };
   GetWebsiteFromApplication = (application: IApplication): any => {
@@ -40,7 +45,10 @@ export class Application {
       client_id: application.client_id,
     };
   };
-  GetClientContactFromBusinessOwnerDetails = (businessOwnerDetail: IBusinessOwnerDetails): any => {
+  GetClientContactFromBusinessOwnerDetails = (
+    businessOwnerDetail: IBusinessOwnerDetails
+  ): any => {
+    console.log('function', businessOwnerDetail);
     return {
       id: businessOwnerDetail?.id,
       title: businessOwnerDetail.title,
@@ -51,7 +59,7 @@ export class Application {
       country_of_residence: businessOwnerDetail.country_of_residence,
       share_holding_percentage: businessOwnerDetail.ownership_percentage,
       role: businessOwnerDetail.job_title,
-      place_of_birth: businessOwnerDetail.place_of_birth
+      place_of_birth: businessOwnerDetail.place_of_birth,
     };
   };
 
@@ -76,27 +84,70 @@ export class Application {
           this.GetClientFromApplication(application),
           transaction
         );
+        application.business_owner_details.forEach(
+          async (element: IBusinessOwnerDetails) => {
+            const clientContact = await ClientContact.UpdateOrCreate(
+              this.GetClientContactFromBusinessOwnerDetails(element),
+              transaction
+            );
+            const clientContactAddress = await ClientContactAddress.FindOne(
+              clientContact.id,
+              transaction
+            );
+            if (clientContactAddress instanceof ClientContactAddress) {
+              element.address.id = clientContactAddress.address_id;
+              await Address.UpdateOrCreate(
+                this.GetAddress(element.address, 'secondary', false),
+                transaction
+              );
+            } else {
+              console.log('address', element.address);
+              const contactaddress = await Address.UpdateOrCreate(
+                this.GetAddress(element.address, 'secondary', false),
+                transaction
+              );
+              await ClientContactAddress.CreateOrReturn(
+                clientContact.id,
+                contactaddress.id,
+                transaction
+              );
+            }
+          }
+        );
 
-        const clientAddress = await ClientAddress.FindOne(client.id, transaction);
+        const clientAddress = await ClientAddress.FindOne(
+          client.id,
+          transaction
+        );
 
         // Address for the client which is a business address
-        if(clientAddress instanceof ClientAddress) {
+        if (clientAddress instanceof ClientAddress) {
           application.business_details.address.id = clientAddress.address_id;
           await Address.UpdateOrCreate(
-            this.GetAddress(application.business_details.address, 'secondary', false),
+            this.GetAddress(
+              application.business_details.address,
+              'secondary',
+              false
+            ),
             transaction
           );
         } else {
           const address = await Address.UpdateOrCreate(
-            this.GetAddress(application.business_details.address, 'secondary', false),
+            this.GetAddress(
+              application.business_details.address,
+              'secondary',
+              false
+            ),
             transaction
           );
-          await ClientAddress.CreateOrReturn(client.id, address.id, transaction);
+          await ClientAddress.CreateOrReturn(
+            client.id,
+            address.id,
+            transaction
+          );
         }
 
-
-        return Promise.resolve({message: 'ok'});
-
+        return Promise.resolve({ message: 'ok' });
 
         /* const businessWebsite = await Website.UpdateOrCreate(
           this.GetWebsiteFromApplication(application),
@@ -152,9 +203,9 @@ export class Application {
       premises: address.premises,
       locality: address.locality,
       country: address.country,
-      post_code: address.postcode
-    }
-  }
+      post_code: address.postcode,
+    };
+  };
 
   GetApplication = async (req: Request, res: Response) => {
     // take client_id from jwt Ashraf ->

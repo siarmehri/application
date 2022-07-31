@@ -7,6 +7,7 @@ import {
   CreatedAt,
   ForeignKey,
   AutoIncrement,
+    Sequelize,
   PrimaryKey,
   BelongsTo,
   HasMany,
@@ -58,10 +59,12 @@ export class ClientContact extends Model<ClientContact> {
   @Column
   client_id: number;
 
+  @Default(Sequelize.fn('now'))
   @Column
   @CreatedAt
   created_at: Date;
 
+  @Default(Sequelize.fn('now'))
   @Column
   @UpdatedAt
   updated_at: Date = new Date();
@@ -81,21 +84,19 @@ export class ClientContact extends Model<ClientContact> {
   ) {
     try {
       return Promise.resolve(
-        await ClientContact.create(clientContactData, {
-          transaction: transaction,
-        })
+        await ClientContact.create(clientContactData, { transaction: transaction })
       );
     } catch (err) {
       console.log((err as any).message);
       return Promise.reject(err);
     }
   }
-  static async FindOne(id: any, transaction: Transaction) {
+  static async FindOne(id: number, transaction: Transaction) {
     try {
       return Promise.resolve(
         await ClientContact.findOne({
           where: {
-            id: id
+            id
           },
           transaction: transaction,
         })
@@ -109,17 +110,18 @@ export class ClientContact extends Model<ClientContact> {
     transaction: Transaction
   ) {
     try {
-      const data = (clientContactData.id) ? await this.FindOne(clientContactData.id, transaction) : null;
-      if (!data) {
-        return Promise.resolve(
-          await ClientContact.Save(clientContactData, transaction)
-        );
+      const clientContact = (clientContactData.id) ? await this.FindOne(clientContactData.id, transaction): null;
+      if(!clientContact) {
+        return Promise.resolve(await ClientContact.Save(clientContactData, transaction));
       } else {
-        await ClientContact.update(clientContactData, {
-          where: { id: data.id },
-          transaction: transaction,
-        });
-        return Promise.resolve(await ClientContact.FindOne(data.id, transaction));
+        Promise.resolve(
+          ClientContact.update(clientContactData, {
+            where: { id: clientContactData.id },
+            transaction: transaction,
+          })
+        );
+
+        return Promise.resolve(await this.FindOne(clientContact.id, transaction));
       }
     } catch (err) {
       return Promise.reject(err);
