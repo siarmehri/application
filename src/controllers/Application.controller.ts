@@ -91,7 +91,7 @@ export class Application {
             this.GetAddress(application.business_details.address, 'secondary', false),
             transaction
           );
-          ClientAddress.CreateOrReturn(client.id, address.id, transaction);
+          await ClientAddress.CreateOrReturn(client.id, address.id, transaction);
         }
 
 
