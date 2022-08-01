@@ -1,13 +1,15 @@
 
 import mongoose, { Schema } from 'mongoose';
+import { config } from '../config/config';
 
 import { IApplication } from '../interfaces/IApplication';
 
 export interface IClientIDObject {
   client_id: number
 }
+// mongodb://root:12345@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false
 
-const mongoConnection = mongoose.createConnection('mongodb://root:example@mongo:27017/');
+const mongoConnection = mongoose.createConnection(config.mongo.connection_string);
 const anySchema = new Schema({}, { strict: false })
 const DraftApplicationModel = mongoConnection.model('DraftApplication', anySchema);
 

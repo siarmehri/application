@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
 import ClientExtraData from '../model/mongoDBModels/ClientExtraData';
 import {IBusinessDetails, IApplication} from '../interfaces/IApplication';
+import { config } from '../config/config';
 let application = new ClientExtraData();
 
 class ApplicationExtraData {
   // store application extra data
   storeApplicationExtraData = async (extraData: IBusinessDetails, clientID: IApplication) => {
     try{
-      mongoose.createConnection('mongodb://root:example@mongo:27017/');
+      mongoose.createConnection(config.mongo.connection_string);
       let application = new ClientExtraData({
         client_id: clientID.client_id,
         MerchantFulfilment: extraData.merchant_fulfillment,
