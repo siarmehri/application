@@ -7,7 +7,7 @@ import { FileRouter } from "./route/file.router";
 import { sequelize } from "./util/sequelize";
 import { umzug } from "./util/umzug";
 const app = express();
-const port = 8080; // default port to listen
+const port = 8082; // default port to listen
 
 (async () => {
   try {

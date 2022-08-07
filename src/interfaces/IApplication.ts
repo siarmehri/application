@@ -26,7 +26,7 @@ export interface IBusinessType {
   company_name: string,
   registered_business_country: string,
   company_number: string,
-  business_type: BusinessType,
+  business_type?: BusinessType,
   date_of_incorporation: Date,
   trading_name: string,
   vat_number: string,
@@ -70,7 +70,7 @@ export interface IBusinessOwnerDetails {
   address: IAddress,
   ownership_percentage: number,
   email_address: string,
-  job_title: JobTitle, // Defaulted Director
+  job_title?: JobTitle, // Defaulted Director
   place_of_birth: string,
   is_updated?: boolean,
   is_deleted?: boolean,
@@ -87,7 +87,7 @@ export interface IBankDetails {
   IBAN?: string,
   sort_code: string,
   BIC?: string,
-  account_number: number,
+  account_number: string,
   business_bank_statement?: IFileUploadMechanism,
   fileUploadNeeded?: IFileUploadMechanism,
   error?: {}
@@ -100,6 +100,7 @@ export interface IExtraApplicationData {
 export interface IAddress {
   id?: number,
   address_line_1: string,
+  is_primary?:boolean,
   premises?: string,
   locality?: string,
   country: string,
@@ -109,6 +110,9 @@ export interface IAddress {
   contact_id?: number,
   error?: {}
 }
+
+
+
 
 export enum AddressType {
   CLIENT_ADDRESS = "contact",

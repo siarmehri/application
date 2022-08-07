@@ -30,7 +30,9 @@ class DraftApplicationCollection {
   }
 
   GetDraftApplication = async (clientIdObject: IClientIDObject) => {
-    await DraftApplicationModel.findOne(clientIdObject);
+    const draftApplication = await DraftApplicationModel.findOne(clientIdObject);
+    console.log({draftApplication,clientIdObject});
+   return draftApplication;
   }
   // StoreApplicationExtraData = async (application: IExtraApplicationData) => {
   //   const mongoConnection = mongoose.createConnection('mongodb://root:example@mongo:27017/');

@@ -10,6 +10,7 @@ import {
     Sequelize,
   PrimaryKey,
   BelongsTo,
+    BelongsToMany,
   HasMany,
 } from 'sequelize-typescript';
 import { Transaction } from 'sequelize';
@@ -17,6 +18,7 @@ import { Address } from './Address';
 import { Client } from './Client';
 import { EmailAddress } from './EmailAddress';
 import { PhoneNumber } from './PhoneNumber';
+import { ClientContactAddress } from './ClientContactAddress';
 
 @Table({ tableName: 'client_contact' })
 export class ClientContact extends Model<ClientContact> {
@@ -77,6 +79,9 @@ export class ClientContact extends Model<ClientContact> {
 
   @HasMany(() => EmailAddress)
   emails: [EmailAddress];
+  
+  @BelongsToMany(() => Address, () => ClientContactAddress)
+  addresses: Address[];
 
   public static async Save(
     clientContactData: any,

@@ -13,6 +13,7 @@ import {
   Scopes,
   HasMany,
   BelongsToMany,
+  HasOne,
 } from 'sequelize-typescript';
 import { Transaction } from 'sequelize';
 import { Address } from './Address';
@@ -21,6 +22,7 @@ import { EmailAddress } from './EmailAddress';
 import { PhoneNumber } from './PhoneNumber';
 import { Website } from './website';
 import { ClientAddress } from './ClientAddress';
+import { BankDetail } from './BankDetail';
 
 export interface IClient {
   id: number,
@@ -49,7 +51,7 @@ export interface IClient {
             attributes: {
               exclude: ['updated_at', 'created_at'],
             },
-            through: { attributes: [] },
+           through: { attributes: [] },
             model: Address,
           },
           {
@@ -58,12 +60,14 @@ export interface IClient {
             },
             model: PhoneNumber,
           },
+             
           {
             attributes: {
               exclude: ['updated_at', 'created_at'],
             },
             model: EmailAddress,
           },
+         
         ],
       },
       {
@@ -77,6 +81,7 @@ export interface IClient {
         attributes: {
           exclude: ['updated_at', 'created_at', 'client_contact_id'],
         },
+        
         model: PhoneNumber,
       },
       {
@@ -91,6 +96,12 @@ export interface IClient {
         },
         model: Website,
       },
+        {
+            attributes: {
+              exclude: ['updated_at', 'created_at'],
+            },
+            model: BankDetail,
+          },
     ]
   }
 }))
@@ -180,6 +191,9 @@ export class Client extends Model<Client> {
 
   @HasMany(() => Website)
   websites: Website[];
+
+   @HasOne(() => BankDetail)
+  bankDetails: BankDetail;
 
   @BelongsToMany(() => Address, () => ClientAddress)
   addresses: Address[];

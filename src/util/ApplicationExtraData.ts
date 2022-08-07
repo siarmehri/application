@@ -26,10 +26,10 @@ class ApplicationExtraData {
   }
 
   // get application extra data
-  getApplicationExtraData = async (clientID:IApplication) => {
+  getApplicationExtraData = async (clientID:number) => {
     try{
       mongoose.createConnection('mongodb://root:example@mongo:27017/');
-      await ClientExtraData.findOne({client_id:clientID.client_id});
+      await ClientExtraData.findOne({client_id:clientID});
     }
     catch(err){
       console.log('Error: ' + (err as any).message);

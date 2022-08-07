@@ -3,6 +3,7 @@ import {
   UpdatedAt, CreatedAt, AutoIncrement, PrimaryKey,
   Sequelize, DataType, AllowNull, ForeignKey, BelongsTo
 } from 'sequelize-typescript';
+import { Transaction } from 'sequelize';
 import { Client } from './Client';
 import { ClientContact } from './ClientContact';
 
@@ -45,6 +46,58 @@ export class BankDetail extends Model<BankDetail> {
 
   @BelongsTo(() => Client)
   client: Client;
+
+ public static async Save(
+    bankDetailData: any,
+    transaction: Transaction
+  ) {
+    try {
+      return Promise.resolve(
+        await BankDetail.create(bankDetailData, { transaction: transaction })
+      );
+    } catch (err) {
+      console.log((err as any).message);
+      return Promise.reject(err);
+    }
+  }
+  static async FindOne(client_id: number, transaction: Transaction) {
+    try {
+      return Promise.resolve(
+        await BankDetail.findOne({
+          where: {
+            client_id:client_id
+          },
+          transaction: transaction,
+        })
+      );
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+  public static async UpdateOrCreate(
+   bankDetailData: any,
+    transaction: Transaction
+  ) {
+    try {
+      const bankDetail = (bankDetailData.client_id) ? await this.FindOne(bankDetailData.client_id, transaction): null;
+      if(!bankDetail) {
+        return Promise.resolve(await BankDetail.Save(bankDetailData, transaction));
+      } else {
+        Promise.resolve(
+          BankDetail.update(bankDetailData, {
+            where: {client_id: bankDetailData.client_id },
+            transaction: transaction,
+          })
+        );
+
+        return Promise.resolve(await this.FindOne(bankDetail.id, transaction));
+      }
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
+
 
 }
 
