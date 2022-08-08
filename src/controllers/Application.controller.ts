@@ -197,35 +197,45 @@ export class Application {
     }
   };
   PostApplication = async (req: Request, res: Response) => {
-    const application: IApplication = req.body;
-    if (
-      application.error &&
-      JSON.stringify(application.error) !== JSON.stringify({})
-    ) {
-      // Shakir
-      await DraftApplication.StoreDraftApplication(application);
-    } else {
-      console.log(
-        'Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB'
-      );
-      // Relational DB logic ()
-      await DraftApplication.DeleteDraftApplication({
-        client_id: application.client_id,
-      });
-      this.StoreApplicationInDB(application);
-      // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
-      await appExtraData.storeApplicationExtraData(
-        application.business_details,
-        application
-      );
-      // completed
-      // Ashraf
-      // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
-      // completed
-      // Ashraf
-    }
+    try{
+      const application: IApplication = req.body;
 
-    return res.send(application);
+      if (
+        application.error &&
+        JSON.stringify(application.error) !== JSON.stringify({})
+      ) {
+        // Shakir
+        await DraftApplication.StoreDraftApplication(application);
+      }
+       else {
+        console.log(
+          'Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB'
+        );
+        // Relational DB logic ()
+     
+        this.StoreApplicationInDB(application);
+        // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
+        await appExtraData.storeApplicationExtraData(
+          application.business_details,
+          application
+        );
+    
+        // completed
+        // Ashraf
+        // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
+        // completed
+        // Ashraf
+           await DraftApplication.DeleteDraftApplication({
+          client_id: application.client_id,
+        });
+      }
+  
+      return res.send(application);
+
+    }
+    catch(err){
+      console.log(err);
+    }
   };
 
   GetAddress = (address: IAddress, type: string, isPrimary: boolean) => {
@@ -247,7 +257,7 @@ export class Application {
       client_id: parseInt(id),
     });
 
-    if (!draftApp) {
+    if (draftApp) {
       console.log('in if');
       return res.send(draftApp);
     } else {
@@ -257,6 +267,8 @@ export class Application {
       if (!client) {
         return res.status(404).send({ message: 'client not found' });
       }
+const extraData = await appExtraData.getApplicationExtraData(parseInt(id));
+console.log("Extra data",extraData);
 
         let website: any;
         let clientContacts:any;
@@ -384,7 +396,7 @@ export class Application {
       //     }
       // }
 
-      // const extraData = await appExtraData.getApplicationExtraData(parseInt(id));
+      // 
       
       //   let Address: any = {
       //     type: '',

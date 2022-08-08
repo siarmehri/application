@@ -7,7 +7,7 @@ class ApplicationExtraData {
   // store application extra data
   storeApplicationExtraData = async (extraData: IBusinessDetails, clientID: IApplication) => {
     try{
-      mongoose.createConnection('mongodb://root:example@mongo:27017/');
+      (await mongoose.connect('mongodb://root:example@mongo:27017/')).connection;
       let application = new ClientExtraData({
         client_id: clientID.client_id,
         MerchantFulfilment: extraData.merchant_fulfillment,
@@ -17,7 +17,8 @@ class ApplicationExtraData {
         BusinessTransactionsPOS: extraData.business_transactions_pos,
         MonthExpectedCardVolume: extraData.month_expected_card_volume
       })
-      await application.save();
+      return Promise.resolve(await application.save());
+      
     }
     catch(err){
       console.log('Error: ' + (err as any).message);
@@ -28,8 +29,9 @@ class ApplicationExtraData {
   // get application extra data
   getApplicationExtraData = async (clientID:number) => {
     try{
-      mongoose.createConnection('mongodb://root:example@mongo:27017/');
-      await ClientExtraData.findOne({client_id:clientID});
+      (await mongoose.connect('mongodb://root:example@mongo:27017/')).connection;
+     const extraData= await ClientExtraData.findOne({client_id:clientID});
+     return extraData;
     }
     catch(err){
       console.log('Error: ' + (err as any).message);
