@@ -1,24 +1,23 @@
-import { Request, Response } from 'express';
-import { DraftApplication } from '../util/DraftApplicationCollection';
+import { Request, Response } from "express";
+import { DraftApplication } from "../util/DraftApplicationCollection";
 import {
   IAddress,
   IApplication,
   IBusinessOwnerDetails,
   BusinessType,
   AddressType,
-} from '../interfaces/IApplication';
-import { appExtraData } from '../util/ApplicationExtraData';
-import { Client } from '../model/Client';
-import { sequelize } from '../util/sequelize';
-import { Website } from '../model/website';
-import { ClientContact } from '../model/ClientContact';
-import { Address } from '../model/Address';
-import { Transaction } from 'sequelize';
-import { IClient } from '../model/Client';
-import { ClientAddress } from '../model/ClientAddress';
-import { ClientContactAddress } from '../model/ClientContactAddress';
-import { BankDetail } from '../model/BankDetail';
-import { constants } from 'crypto';
+} from "../interfaces/IApplication";
+import { appExtraData } from "../util/ApplicationExtraData";
+import { Client } from "../model/Client";
+import { sequelize } from "../util/sequelize";
+import { Website } from "../model/website";
+import { ClientContact } from "../model/ClientContact";
+import { Address } from "../model/Address";
+import { Transaction } from "sequelize";
+import { IClient } from "../model/Client";
+import { ClientAddress } from "../model/ClientAddress";
+import { ClientContactAddress } from "../model/ClientContactAddress";
+import { BankDetail } from "../model/BankDetail";
 
 export class Application {
   GetClientFromApplication = (application: IApplication): IClient => {
@@ -70,7 +69,7 @@ export class Application {
     businessOwnerDetail: IBusinessOwnerDetails,
     client_id: any
   ): any => {
-    console.log('function', businessOwnerDetail);
+    console.log("function", businessOwnerDetail);
     return {
       id: businessOwnerDetail?.id,
       title: businessOwnerDetail.title,
@@ -119,13 +118,13 @@ export class Application {
           if (clientContactAddress instanceof ClientContactAddress) {
             element.address.id = clientContactAddress.address_id;
             await Address.UpdateOrCreate(
-              this.GetAddress(element.address, 'secondary', false),
+              this.GetAddress(element.address, "secondary", false),
               transaction
             );
           } else {
-            console.log('address', element.address);
+            console.log("address", element.address);
             const contactAddress = await Address.UpdateOrCreate(
-              this.GetAddress(element.address, 'secondary', false),
+              this.GetAddress(element.address, "secondary", false),
               transaction
             );
             await ClientContactAddress.CreateOrReturn(
@@ -147,7 +146,7 @@ export class Application {
           await Address.UpdateOrCreate(
             this.GetAddress(
               application.business_details.address,
-              'secondary',
+              "secondary",
               false
             ),
             transaction
@@ -156,7 +155,7 @@ export class Application {
           const address = await Address.UpdateOrCreate(
             this.GetAddress(
               application.business_details.address,
-              'secondary',
+              "secondary",
               false
             ),
             transaction
@@ -175,7 +174,7 @@ export class Application {
           this.GetBankDetailsFromApplication(application, client.id),
           transaction
         );
-        return Promise.resolve({ message: 'ok' });
+        return Promise.resolve({ message: "ok" });
 
         /*
         const businessAddress = await Address.UpdateOrCreate(
@@ -197,7 +196,7 @@ export class Application {
     }
   };
   PostApplication = async (req: Request, res: Response) => {
-    try{
+    try {
       const application: IApplication = req.body;
 
       if (
@@ -206,37 +205,46 @@ export class Application {
       ) {
         // Shakir
         await DraftApplication.StoreDraftApplication(application);
-      }
-       else {
+      } else {
         console.log(
-          'Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB'
+          "Ashraf please store this full application in Relational DB & Store ExtraData for this application in MongoDB"
         );
         // Relational DB logic ()
-     
+
         this.StoreApplicationInDB(application);
         // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
         await appExtraData.storeApplicationExtraData(
           application.business_details,
           application
         );
-    
+
         // completed
         // Ashraf
         // Store Extra Data in Mongo (Shakir please create a mechanism to store extra data into mongodb)
         // completed
         // Ashraf
-           await DraftApplication.DeleteDraftApplication({
+        await DraftApplication.DeleteDraftApplication({
           client_id: application.client_id,
         });
       }
-  
+
       return res.send(application);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
+  UpdateApplication = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try{
 
     }
     catch(err){
       console.log(err);
+      
     }
-  };
+  }
+
 
   GetAddress = (address: IAddress, type: string, isPrimary: boolean) => {
     return {
@@ -251,6 +259,7 @@ export class Application {
     };
   };
 
+
   GetApplication = async (req: Request, res: Response) => {
     const { id } = req.params;
     const draftApp = await DraftApplication.GetDraftApplication({
@@ -258,27 +267,29 @@ export class Application {
     });
 
     if (draftApp) {
-      console.log('in if');
+      console.log("in if");
       return res.send(draftApp);
     } else {
-      console.log(' in else ');
+      console.log(" in else ");
       // 2 if nothing in mongo db take full scope of client and rebuild the IApplication Object return that object to FE
-      const client = await Client.scope('full').findByPk(id);
+      const client = await Client.scope("full").findByPk(id);
       if (!client) {
-        return res.status(404).send({ message: 'client not found' });
+        return res.status(404).send({ message: "client not found" });
       }
-const extraData = await appExtraData.getApplicationExtraData(parseInt(id));
-console.log("Extra data",extraData);
+      const extraData = await appExtraData.getApplicationExtraData(
+        parseInt(id)
+      );
+      console.log("Extra data", extraData);
 
-        let website: any;
-        let clientContacts:any;
+      let website: any;
+      let clientContacts: any;
 
-          client.websites.forEach(async (element: any) => {
-          website = element.urls;
-        });
- client.clientContacts.forEach(async (element: any) => {
-          clientContacts = element;
-        });
+      client.websites.forEach(async (element: any) => {
+        website = element.urls;
+      });
+      client.clientContacts.forEach(async (element: any) => {
+        clientContacts = element;
+      });
       const applicationObject: IApplication = {
         business_type: {
           company_name: client.business_name,
@@ -293,7 +304,7 @@ console.log("Extra data",extraData);
             type: AddressType.CLIENT_ADDRESS,
             is_primary: client.addresses[0].is_primary,
             address_line_1: client.addresses[0].address_line,
-            premises:  client.addresses[0].premises,
+            premises: client.addresses[0].premises,
             locality: client.addresses[0].locality,
             country: client.addresses[0].country,
             postcode: client.addresses[0].post_code,
@@ -305,16 +316,16 @@ console.log("Extra data",extraData);
           business_transactions_pos: 0,
           month_expected_card_volume: 10,
           average_transaction_value: 1000,
-          business_email: 'siarmehri@devondemand.co.uk',
-          phone_number: '07492051788',
+          business_email: "siarmehri@devondemand.co.uk",
+          phone_number: "07492051788",
         },
-         business_owner_details: clientContacts,
+        business_owner_details: clientContacts,
         bank_details: {
-            account_holder_name: client.bankDetails.full_name,
-            bank_name: client.bankDetails.bank_name,
-            account_number: client.bankDetails.bank_account_number,
-            sort_code: client.bankDetails.sort_code,
-          },
+          account_holder_name: client.bankDetails.full_name,
+          bank_name: client.bankDetails.bank_name,
+          account_number: client.bankDetails.bank_account_number,
+          sort_code: client.bankDetails.sort_code,
+        },
       };
 
       // {
@@ -396,8 +407,8 @@ console.log("Extra data",extraData);
       //     }
       // }
 
-      // 
-      
+      //
+
       //   let Address: any = {
       //     type: '',
       //     is_primary: '',
@@ -420,11 +431,11 @@ console.log("Extra data",extraData);
       //     place_of_birth: '',
       //   };
 
-      // 
+      //
       //   client.addresses.forEach(async (element: any) => {
       //     Address = element;
       //   });
-      //  
+      //
 
       //   console.log('CLIENTADDREES', Address);
 
@@ -465,7 +476,6 @@ console.log("Extra data",extraData);
     // take client_id from jwt Ashraf ->
     // 1. Mongo DB Draft Application (In this scenario no need to take it from relational db)
     // 2 if nothing in mongo db take full scope of client and rebuild the IApplication Object return that object to FE
-    
   };
 }
 
